@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Radiology AI Co-Pilot — Madhumanti Mitra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/shared.css"/>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">M<span>.</span>Mitra</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/work/" class="active">Work</a></li>
+    <li><a href="/concept-lab/">Concept Lab</a></li>
+    <li><a href="/experience/">Experience</a></li>
+    <li><a href="/contact/">Contact</a></li>
+  </ul>
+  <a href="/contact/" class="nav-contact btn">Get in touch →</a>
+</nav>
+
+<div style="position:relative;z-index:1">
+<div class="detail-wrap">
+      <a class="back-btn" href="/work/">← Back to work</a>
+      <div class="detail-tag">Diagnostic Imaging AI · Citiustech Inc. · Sep 2020 — Oct 2022</div>
+      <h1 class="detail-h1">Radiology AI Co-Pilot</h1>
+      <p class="detail-sub">Directed the large-scale implementation of a deep learning radiology co-pilot that enhanced DICOM image annotation accuracy — improving radiologist efficiency, diagnostic consistency, and throughput across hospital imaging departments.</p>
+      <div class="detail-meta">
+        <span><strong>Role:</strong> Senior Business Analyst</span>
+        <span><strong>Stack:</strong> Deep Learning, Computer Vision, DICOM, APIs</span>
+        <span><strong>Duration:</strong> Sep 2020 — Oct 2022 · India</span>
+      </div>
+      <div class="metrics-strip">
+        <div class="ms-item"><div class="ms-val">↑</div><div class="ms-lbl">DICOM annotation accuracy</div></div>
+        <div class="ms-item"><div class="ms-val">~32%</div><div class="ms-lbl">Manual document review reduced</div></div>
+        <div class="ms-item"><div class="ms-val">↑</div><div class="ms-lbl">Radiologist throughput</div></div>
+        <div class="ms-item"><div class="ms-val">✓</div><div class="ms-lbl">Enterprise-scale deployment</div></div>
+      </div>
+      <h3 class="detail-section-h">The Problem</h3>
+      <p class="detail-text">Radiology departments were operating under growing volume pressure — more imaging studies, tighter turnaround expectations, and persistent risk of annotation inconsistency. Manual DICOM review was the primary bottleneck: time-intensive, subject to reader variability, and difficult to scale without adding headcount. The AI co-pilot had to embed cleanly into the existing PACS workflow, not bolt on as a separate tool.</p>
+      <h3 class="detail-section-h">What I Delivered</h3>
+      <ul class="phase-list">
+        <li class="phase-item"><div class="phase-num">01</div><div><div class="phase-title">Clinical Discovery &amp; Workflow Mapping</div><ul class="phase-desc-list"><li>Conducted structured discovery sessions with radiologists, department heads, and IT to map the end-to-end imaging workflow</li><li>Identified annotation tasks where deep learning would add the highest signal-to-noise</li></ul></div></li>
+        <li class="phase-item"><div class="phase-num">02</div><div><div class="phase-title">Deep Learning Model Integration</div><ul class="phase-desc-list"><li>Directed integration of a deep learning model stack into the radiology PACS environment</li><li>Translated clinical accuracy requirements into model evaluation criteria — sensitivity, specificity, false negative thresholds</li></ul></div></li>
+        <li class="phase-item"><div class="phase-num">03</div><div><div class="phase-title">DICOM Standards &amp; Interoperability</div><ul class="phase-desc-list"><li>Ensured the AI output layer was fully DICOM-compliant, storing annotation results as DICOM-SR objects</li><li>Enabled downstream exchange with RIS and EHR systems without format conversion overhead</li></ul></div></li>
+        <li class="phase-item"><div class="phase-num">04</div><div><div class="phase-title">Confidence Scoring &amp; Override Framework</div><ul class="phase-desc-list"><li>Specified a clinical-grade confidence scoring system surfacing AI certainty levels alongside each annotation</li><li>Radiologists retained full override capability — the co-pilot was designed as augmentation, not replacement</li></ul></div></li>
+        <li class="phase-item"><div class="phase-num">05</div><div><div class="phase-title">Agile Delivery &amp; Stakeholder Management</div><ul class="phase-desc-list"><li>Managed cross-functional delivery across engineering, clinical informatics, compliance, and radiology operations</li><li>Coordinated UAT with radiologist panels and ensured the go-live plan included parallel-read validation</li></ul></div></li>
+      </ul>
+      <h3 class="detail-section-h">Retrospective</h3>
+      <div class="retro-grid">
+        <div class="retro-box went-well"><h4>✓ What Went Well</h4><ul><li>Confidence scoring was the key to radiologist trust — surfacing uncertainty rather than hiding it built credibility fast</li><li>DICOM-SR output format meant downstream integration required no additional engineering effort</li><li>Parallel-read validation during UAT caught two annotation edge-cases that would have been missed in a lab-only test</li></ul></div>
+        <div class="retro-box challenges"><h4>⚠ Challenges</h4><ul><li>PACS vendor APIs were underdocumented — real integration timelines ran 2–3× longer than initially estimated</li><li>Model retraining cycles on clinical data required more radiologist annotation time than anticipated at scoping</li><li>Change management for senior radiologists was more intensive than for juniors</li></ul></div>
+        <div class="retro-box lessons" style="grid-column:span 2"><h4>→ Key Lessons</h4><ul><li>Discovery must include a PACS technical deep-dive in week one — vendor API quality is the most common delivery risk in imaging AI</li><li>Build radiologist annotation time into the project plan as a resource with a budget, not an assumption</li><li>Frame the co-pilot as workload reduction, not accuracy improvement — clinicians respond to capacity arguments</li><li>Run compliance review in parallel with development from sprint one</li></ul></div>
+      </div>
+    </div>
+</div>
+
+<footer>
+  <div>© 2026 Madhumanti Mitra · AI Product Manager · Dubai, UAE</div>
+  <div>
+    <a href="https://linkedin.com/in/madhumanti-m-764b0aa5" target="_blank">LinkedIn</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:madhumanti.ct@gmail.com">madhumanti.ct@gmail.com</a>
+  </div>
+</footer>
+
+</body>
+</html>

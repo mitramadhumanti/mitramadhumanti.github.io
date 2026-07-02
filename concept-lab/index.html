@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Concept Lab — Madhumanti Mitra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/shared.css"/>
+<style>
+/* ── CONCEPT LAB SPECIFIC ── */
+.lab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:48px}
+@media(max-width:900px){.lab-grid{grid-template-columns:1fr}}
+
+/* Featured card spans full width */
+.lab-card-featured{background:linear-gradient(135deg,rgba(0,200,160,0.06),rgba(126,184,247,0.04));border:1px solid rgba(0,200,160,0.2);border-radius:var(--r3);padding:36px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin-bottom:24px;position:relative;overflow:hidden;cursor:pointer;transition:all 0.25s var(--ease)}
+.lab-card-featured:hover{border-color:rgba(0,200,160,0.4);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.lab-card-featured::before{content:'';position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle,rgba(0,200,160,0.06),transparent 70%);pointer-events:none}
+.lfc-eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px}
+.lfc-dot{width:6px;height:6px;border-radius:50%;background:#00C8A0;animation:pulse 2.4s ease-in-out infinite}
+.lfc-badge{font-size:11px;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:#00C8A0}
+.lfc-title{font-family:var(--ff-head);font-size:clamp(24px,3vw,36px);font-weight:800;line-height:1.1;letter-spacing:-0.5px;color:var(--ink);margin-bottom:12px}
+.lfc-title em{font-style:italic;color:#00C8A0}
+.lfc-desc{font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:24px;font-weight:300}
+.lfc-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px}
+.lfc-actions{display:flex;gap:12px;align-items:center}
+.btn-teal{background:rgba(0,200,160,0.15);border:1px solid rgba(0,200,160,0.4);color:#00C8A0;border-radius:50px;padding:10px 22px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s var(--ease);display:inline-flex;align-items:center;gap:8px}
+.btn-teal:hover{background:rgba(0,200,160,0.25);transform:translateY(-1px)}
+.lfc-preview{background:linear-gradient(135deg,rgba(2,9,24,0.9),rgba(4,13,31,0.95));border:1px solid rgba(33,150,243,0.3);border-radius:var(--r2);padding:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#64b5f6;line-height:1.8;position:relative;overflow:hidden}
+.lfc-preview::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(33,150,243,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(33,150,243,0.03) 1px,transparent 1px);background-size:20px 20px;pointer-events:none}
+.lfc-metric{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(33,150,243,0.1)}
+.lfc-metric:last-child{border-bottom:none}
+.lfc-metric .k{color:#4a7abf}
+.lfc-metric .v{color:#00e5ff;font-weight:700}
+.lfc-metric .v.amber{color:#ffab00}
+.lfc-metric .v.red{color:#ff1744}
+.lfc-metric .v.green{color:#00e676}
+
+/* Regular lab cards */
+.lab-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:all 0.25s var(--ease);display:flex;flex-direction:column}
+.lab-card:hover{border-color:rgba(255,255,255,0.15);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.lab-card-inner{padding:28px;flex:1;display:flex;flex-direction:column}
+.lab-card-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 12px;border-radius:50px;margin-bottom:14px}
+.lab-card-tag.amana{background:rgba(126,184,247,0.1);border:1px solid rgba(126,184,247,0.25);color:var(--gold2)}
+.lab-card-tag.derma{background:rgba(230,120,80,0.1);border:1px solid rgba(230,120,80,0.25);color:#E67850}
+.lab-card h3{font-family:var(--ff-head);font-size:20px;font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:10px}
+.lab-card p{font-size:13.5px;color:var(--ink2);line-height:1.65;flex:1;margin-bottom:20px}
+.lab-card-footer{margin-top:auto;padding:16px 28px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.lab-status-live{font-size:11px;font-weight:600;color:#00E676;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.25);padding:3px 12px;border-radius:50px}
+.lab-status-concept{font-size:11px;font-weight:600;color:#FFAB00;background:rgba(255,171,0,0.1);border:1px solid rgba(255,171,0,0.25);padding:3px 12px;border-radius:50px}
+.lab-arrow-sm{font-size:16px;color:var(--ink3);transition:all 0.2s var(--ease)}
+.lab-card:hover .lab-arrow-sm{transform:translate(3px,-3px);color:var(--gold2)}
+
+/* ── INTEGRITY GATE FULL VIEW ── */
+.gate-view{display:none}
+.gate-nav{background:rgba(7,14,26,0.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 40px;display:flex;align-items:center;gap:20px;position:sticky;top:58px;z-index:100}
+.gate-back-btn{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer;transition:color 0.2s var(--ease);white-space:nowrap}
+.gate-back-btn:hover{color:#00C8A0}
+.gate-breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink3)}
+.gate-breadcrumb span{color:var(--ink2)}
+.gate-breadcrumb .sep{color:var(--ink3)}
+
+.gate-info{padding:40px 40px 24px;max-width:1120px;margin:0 auto}
+.gate-info-grid{display:grid;grid-template-columns:1fr 360px;gap:40px;align-items:start;margin-bottom:32px}
+.gate-title-block .gate-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 14px;border-radius:50px;background:rgba(0,200,160,0.1);border:1px solid rgba(0,200,160,0.3);color:#00C8A0;margin-bottom:16px}
+.gate-title-block h2{font-family:var(--ff-head);font-size:clamp(28px,3.5vw,44px);font-weight:800;line-height:1.1;letter-spacing:-0.5px;color:var(--ink);margin-bottom:12px}
+.gate-title-block h2 em{font-style:italic;color:#00C8A0}
+.gate-title-block p{font-size:15px;color:var(--ink2);line-height:1.7;font-weight:300;max-width:540px}
+.gate-meta-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px}
+.gate-meta-row{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:1px solid var(--border)}
+.gate-meta-row:last-child{border-bottom:none;padding-bottom:0}
+.gate-meta-row:first-child{padding-top:0}
+.gate-meta-label{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink3);font-weight:500}
+.gate-meta-val{font-size:13px;color:var(--ink);font-weight:500}
+.gate-meta-val.teal{color:#00C8A0}
+
+.gate-frame-wrap{padding:0 40px 60px;max-width:1120px;margin:0 auto}
+.gate-frame-label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--sapphire);font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.gate-frame-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
+.gate-iframe-container{border-radius:var(--r3);overflow:hidden;border:1px solid rgba(0,200,160,0.25);box-shadow:0 0 60px rgba(0,0,0,0.6),0 0 0 1px rgba(0,200,160,0.1)}
+.gate-iframe-container iframe{display:block;width:100%;border:none;min-height:900px}
+
+.gate-rationale{padding:0 40px 60px;max-width:1120px;margin:0 auto}
+.gate-rationale h3{font-family:var(--ff-head);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:16px}
+.gate-rationale p{font-size:14px;color:var(--ink2);line-height:1.75;margin-bottom:14px}
+.gate-signal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.gate-signal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:22px}
+.gate-signal-icon{font-size:22px;margin-bottom:10px}
+.gate-signal-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.gate-signal-desc{font-size:12.5px;color:var(--ink2);line-height:1.6}
+@media(max-width:768px){.gate-signal-grid{grid-template-columns:1fr}.gate-info-grid{grid-template-columns:1fr}.lfc-preview{display:none}.lab-card-featured{grid-template-columns:1fr}.gate-info,.gate-frame-wrap,.gate-rationale{padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">M<span>.</span>Mitra</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/work/">Work</a></li>
+    <li><a href="/concept-lab/" class="active">Concept Lab</a></li>
+    <li><a href="/experience/">Experience</a></li>
+    <li><a href="/contact/">Contact</a></li>
+  </ul>
+  <a href="/contact/" class="nav-contact btn">Get in touch →</a>
+</nav>
+
+<!-- ══════════════ CONCEPT LAB LIST VIEW ══════════════ -->
+<div id="view-lab" style="position:relative;z-index:1">
+  <div class="section-wrap" style="padding-bottom:100px">
+    <div class="sec-eyebrow">Concept Lab</div>
+    <h2 class="sec-title">Independently built concepts</h2>
+    <p class="sec-lead">Ideas I've designed, prototyped, and shipped outside of my core PM role — proving product thinking with working artifacts, not just decks.</p>
+
+    <!-- Featured: AMANA Integrity Gate -->
+    <div class="lab-card-featured" onclick="showGate()">
+      <div class="lfc-left">
+        <div class="lfc-eyebrow">
+          <div class="lfc-dot"></div>
+          <span class="lfc-badge">Featured · Live Prototype</span>
+        </div>
+        <div class="lfc-title">AMANA <em>Integrity Gate</em></div>
+        <p class="lfc-desc">A payment integrity intelligence dashboard for GCC teletherapy — built independently to demonstrate what a real-time fraud risk and claim adjudication layer looks like at the product level. Features live risk scoring, claim queue management, provider watchlists, and regulatory audit trails aligned to DHA and HAAD standards.</p>
+        <div class="lfc-pills">
+          <span class="pill teal">Payment Integrity</span>
+          <span class="pill teal">Fraud Risk Scoring</span>
+          <span class="pill blue">GCC / UAE</span>
+          <span class="pill blue">DHA · HAAD</span>
+          <span class="pill">Teletherapy</span>
+          <span class="pill">ClaimIQ Engine</span>
+        </div>
+        <div class="lfc-actions">
+          <button class="btn-teal" onclick="showGate();event.stopPropagation()">Open live dashboard →</button>
+          <span style="font-size:12px;color:var(--ink3)">Interactive prototype</span>
+        </div>
+      </div>
+      <div class="lfc-right">
+        <div class="lfc-preview" style="position:relative;z-index:1">
+          <div style="font-size:10px;color:#4a7abf;letter-spacing:0.1em;margin-bottom:12px;font-family:'Outfit',sans-serif;text-transform:uppercase">AMANA · Integrity Gate · Live Feed</div>
+          <div class="lfc-metric"><span class="k">claim_risk_score</span><span class="v amber">78.4 / HIGH</span></div>
+          <div class="lfc-metric"><span class="k">flagged_claims_today</span><span class="v red">247</span></div>
+          <div class="lfc-metric"><span class="k">auto_approved</span><span class="v green">1,842</span></div>
+          <div class="lfc-metric"><span class="k">fraud_leakage_blocked</span><span class="v green">AED 184K</span></div>
+          <div class="lfc-metric"><span class="k">payer_compliance_status</span><span class="v">DHA ✓ · HAAD ✓</span></div>
+          <div class="lfc-metric"><span class="k">clinical_necessity_flag</span><span class="v amber">36 pending</span></div>
+          <div class="lfc-metric"><span class="k">provider_watchlist_hits</span><span class="v red">12</span></div>
+          <div class="lfc-metric"><span class="k">adjudication_engine</span><span class="v">ClaimIQ v2.1</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Other Lab Cards -->
+    <div class="lab-grid">
+      <div class="lab-card" onclick="showGate()">
+        <div class="lab-card-inner">
+          <span class="lab-card-tag amana">GCC Health-Tech · Concept</span>
+          <h3>AMANA Health</h3>
+          <p>A digital teletherapy startup concept for the GCC market — built through full customer discovery, MVP blueprint, business viability scoring (60/100 "Validate"), and a working PWA prototype with live Claude API integration. Demonstrates end-to-end startup product thinking for the UAE mental health ecosystem.</p>
+          <div class="pills" style="margin-top:0">
+            <span class="pill blue">Teletherapy</span>
+            <span class="pill sky">GCC Market</span>
+            <span class="pill">PWA Prototype</span>
+            <span class="pill">Live API</span>
+          </div>
+        </div>
+        <div class="lab-card-footer">
+          <span class="lab-status-concept">In Development</span>
+          <span class="lab-arrow-sm">→</span>
+        </div>
+      </div>
+
+      <div class="lab-card" onclick="location.href='/dermatriage-report/'">
+        <div class="lab-card-inner">
+          <span class="lab-card-tag derma">Clinical AI · Concept</span>
+          <h3>DermaTriage</h3>
+          <p>An AI-powered dermatology triage tool concept — built to demonstrate how computer vision and clinical decision support can reduce unnecessary dermatology referrals and accelerate time-to-diagnosis for UAE primary care settings. Covers ML model design, clinical workflow integration, and regulatory alignment.</p>
+          <div class="pills" style="margin-top:0">
+            <span class="pill blue">Computer Vision</span>
+            <span class="pill sky">Clinical AI</span>
+            <span class="pill">UAE Primary Care</span>
+          </div>
+        </div>
+        <div class="lab-card-footer">
+          <span class="lab-status-concept">Concept Phase</span>
+          <span class="lab-arrow-sm">→</span>
+        </div>
+      </div>
+
+      <div class="lab-card">
+        <div class="lab-card-inner">
+          <span class="lab-card-tag amana">Product Writing · Series</span>
+          <h3>System Notes</h3>
+          <p>A LinkedIn writing series applying behavioural economics and cognitive science to healthcare AI product management — translating book readings (Kahneman's Thinking, Fast and Slow and others) into structured, designed visual cards for a GCC health-tech audience.</p>
+          <div class="pills" style="margin-top:0">
+            <span class="pill">Behavioural Econ</span>
+            <span class="pill sky">PM Thinking</span>
+            <span class="pill">LinkedIn Series</span>
+          </div>
+        </div>
+        <div class="lab-card-footer">
+          <span class="lab-status-live">Active Series</span>
+          <a href="https://linkedin.com/in/madhumanti-m-764b0aa5" target="_blank" style="font-size:12px;color:var(--sapphire);text-decoration:none">Read on LinkedIn →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom CTA -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div>
+        <div style="font-size:13px;color:var(--ink);font-weight:500;margin-bottom:4px">Building in public</div>
+        <div style="font-size:13px;color:var(--ink3)">Follow the product thinking and concept development process on LinkedIn.</div>
+      </div>
+      <a href="https://linkedin.com/in/madhumanti-m-764b0aa5" target="_blank" class="btn btn-ghost" style="border-color:rgba(0,200,160,0.3);color:#00C8A0">Follow on LinkedIn →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ INTEGRITY GATE FULL VIEW ══════════════ -->
+<div id="view-gate" class="gate-view" style="position:relative;z-index:1">
+
+  <div class="gate-nav">
+    <div class="gate-back-btn" onclick="showLab()">← Concept Lab</div>
+    <div class="gate-breadcrumb">
+      <span class="sep">/</span>
+      <span>AMANA Integrity Gate</span>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      <span style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:0.08em">Interactive Prototype</span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#00E676;display:inline-block;animation:pulse 2.4s ease-in-out infinite"></span>
+    </div>
+  </div>
+
+  <div class="gate-info">
+    <div class="gate-info-grid">
+      <div class="gate-title-block">
+        <div class="gate-tag">Concept Lab · AMANA Health · 2025</div>
+        <h2>AMANA <em>Integrity Gate</em></h2>
+        <p>A payment integrity intelligence platform purpose-built for GCC teletherapy — designed to surface fraud risk, automate claim adjudication, and enforce regulatory compliance across DHA and HAAD payer frameworks in real time. Built independently as a product management proof-of-concept, demonstrating how a PM with deep healthcare AI background designs an end-to-end clinical fintech product.</p>
+      </div>
+      <div class="gate-meta-card">
+        <div class="gate-meta-row">
+          <div class="gate-meta-label">Product Type</div>
+          <div class="gate-meta-val">Payment Integrity · Claims Intelligence</div>
+        </div>
+        <div class="gate-meta-row">
+          <div class="gate-meta-label">Market</div>
+          <div class="gate-meta-val teal">UAE / GCC · DHA · HAAD</div>
+        </div>
+        <div class="gate-meta-row">
+          <div class="gate-meta-label">Context</div>
+          <div class="gate-meta-val">AMANA Health — GCC Teletherapy Concept</div>
+        </div>
+        <div class="gate-meta-row">
+          <div class="gate-meta-label">Status</div>
+          <div class="gate-meta-val teal">Live Interactive Prototype</div>
+        </div>
+        <div class="gate-meta-row">
+          <div class="gate-meta-label">Built by</div>
+          <div class="gate-meta-val">Madhumanti Mitra · Independent</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate-frame-wrap">
+    <div class="gate-frame-label">Live Dashboard</div>
+    <div class="gate-iframe-container">
+      <iframe
+        src="/amana-integrity-gate/"
+        title="AMANA Integrity Gate · Payment Integrity Dashboard"
+        scrolling="yes"
+        loading="lazy"
+        style="min-height:960px;width:100%">
+      </iframe>
+    </div>
+  </div>
+
+  <div class="gate-rationale">
+    <h3>Why This Exists</h3>
+    <p>The Integrity Gate is the payment intelligence layer that AMANA Health — a GCC digital teletherapy startup concept — would need to operate at scale. Teletherapy in the UAE sits at a particularly complex intersection: high claim volume, variable clinical necessity standards across DHA and HAAD, evolving CPT code sets for mental health, and payer fraud risk that's materially different from in-person settings.</p>
+    <p>Rather than describing this in a slide deck, I built it. The dashboard reflects real clinical and operational requirements — ClaimIQ adjudication logic, provider watchlist management, real-time risk scoring, and audit trail generation aligned to GCC regulatory frameworks. It's the kind of product a PM with 11 years of healthcare AI experience designs differently from one without it.</p>
+
+    <div class="gate-signal-grid">
+      <div class="gate-signal">
+        <div class="gate-signal-icon">🧠</div>
+        <div class="gate-signal-title">ClaimIQ Adjudication Engine</div>
+        <div class="gate-signal-desc">AI-powered claim scoring with configurable payer rules, CPT code validation, and clinical necessity flagging — built to align with UAE insurer adjudication logic.</div>
+      </div>
+      <div class="gate-signal">
+        <div class="gate-signal-icon">🛡️</div>
+        <div class="gate-signal-title">Regulatory Alignment</div>
+        <div class="gate-signal-desc">DHA and HAAD compliance tracking with automated audit trail generation — designed so every claim decision is defensible and inspectable.</div>
+      </div>
+      <div class="gate-signal">
+        <div class="gate-signal-icon">⚡</div>
+        <div class="gate-signal-title">Real-Time Risk Intelligence</div>
+        <div class="gate-signal-desc">Provider watchlists, fraud leakage monitoring, and session anomaly detection — surfacing signals that static rule engines miss in high-volume teletherapy environments.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div>© 2026 Madhumanti Mitra · AI Product Manager · Dubai, UAE</div>
+  <div>
+    <a href="https://linkedin.com/in/madhumanti-m-764b0aa5" target="_blank">LinkedIn</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:madhumanti.ct@gmail.com">madhumanti.ct@gmail.com</a>
+  </div>
+</footer>
+
+<script>
+function showGate(skipHistory){
+  document.getElementById('view-lab').style.display='none';
+  document.getElementById('view-gate').style.display='block';
+  if(!skipHistory&&window.location.hash!=='#integrity-gate'){
+    history.pushState({view:'gate'},'', '#integrity-gate');
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showLab(skipHistory){
+  document.getElementById('view-gate').style.display='none';
+  document.getElementById('view-lab').style.display='block';
+  if(!skipHistory&&window.location.hash){
+    history.pushState({view:'lab'},'', window.location.pathname);
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+// Auto-open gate if hash present
+if(window.location.hash==='#integrity-gate'){showGate(true);}
+window.addEventListener('popstate',function(){
+  if(window.location.hash==='#integrity-gate'){showGate(true);}
+  else{showLab(true);}
+});
+</script>
+</body>
+</html>
