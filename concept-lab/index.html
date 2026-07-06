@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="/shared.css"/>
 <style>
 /* ── CONCEPT LAB SPECIFIC ── */
-.lab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:48px}
+.lab-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:48px}
 @media(max-width:900px){.lab-grid{grid-template-columns:1fr}}
 
 /* Featured card spans full width */
@@ -114,7 +114,7 @@
     <p class="sec-lead">Ideas I've designed, prototyped, and shipped outside of my core PM role — proving product thinking with working artifacts, not just decks.</p>
 
     <!-- Featured: AMANA Integrity Gate -->
-    <div class="lab-card-featured" onclick="showGate()">
+    <div class="lab-card-featured" onclick="location.href='/amana-integrity-gate/'">
       <div class="lfc-left">
         <div class="lfc-eyebrow">
           <div class="lfc-dot"></div>
@@ -131,7 +131,7 @@
           <span class="pill">ClaimIQ Engine</span>
         </div>
         <div class="lfc-actions">
-          <button class="btn-teal" onclick="showGate();event.stopPropagation()">Open live dashboard →</button>
+          <button class="btn-teal" onclick="location.href='/amana-integrity-gate/';event.stopPropagation()">Open live dashboard →</button>
           <span style="font-size:12px;color:var(--ink3)">Interactive prototype</span>
         </div>
       </div>
@@ -152,24 +152,6 @@
 
     <!-- Other Lab Cards -->
     <div class="lab-grid">
-      <div class="lab-card" onclick="showGate()">
-        <div class="lab-card-inner">
-          <span class="lab-card-tag amana">GCC Health-Tech · Concept</span>
-          <h3>AMANA Health</h3>
-          <p>A digital teletherapy startup concept for the GCC market — built through full customer discovery, MVP blueprint, business viability scoring (60/100 "Validate"), and a working PWA prototype with live Claude API integration. Demonstrates end-to-end startup product thinking for the UAE mental health ecosystem.</p>
-          <div class="pills" style="margin-top:0">
-            <span class="pill blue">Teletherapy</span>
-            <span class="pill sky">GCC Market</span>
-            <span class="pill">PWA Prototype</span>
-            <span class="pill">Live API</span>
-          </div>
-        </div>
-        <div class="lab-card-footer">
-          <span class="lab-status-concept">In Development</span>
-          <span class="lab-arrow-sm">→</span>
-        </div>
-      </div>
-
       <div class="lab-card" onclick="location.href='/dermatriage-report/'">
         <div class="lab-card-inner">
           <span class="lab-card-tag derma">Clinical AI · Concept</span>
@@ -188,9 +170,9 @@
       </div>
 
       <div class="lab-card">
-        <div class="lab-card-inner">
+        <div class="lab-card-inner" onClick="window.open('https://www.linkedin.com/newsletters/thinking-out-loud-7470847551357812736/')">
           <span class="lab-card-tag amana">Product Writing · Series</span>
-          <h3>System Notes</h3>
+          <h3>Thinking Out Loud</h3>
           <p>A LinkedIn writing series applying behavioural economics and cognitive science to healthcare AI product management — translating book readings (Kahneman's Thinking, Fast and Slow and others) into structured, designed visual cards for a GCC health-tech audience.</p>
           <div class="pills" style="margin-top:0">
             <span class="pill">Behavioural Econ</span>
@@ -200,7 +182,7 @@
         </div>
         <div class="lab-card-footer">
           <span class="lab-status-live">Active Series</span>
-          <a href="https://linkedin.com/in/madhumanti-m-764b0aa5" target="_blank" style="font-size:12px;color:var(--sapphire);text-decoration:none">Read on LinkedIn →</a>
+          <a href="https://www.linkedin.com/newsletters/thinking-out-loud-7470847551357812736/" target="_blank" style="font-size:12px;color:var(--sapphire);text-decoration:none">Read on LinkedIn →</a>
         </div>
       </div>
     </div>

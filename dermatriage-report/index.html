@@ -6,42 +6,42 @@
 <title>DermaTriage — Clinical Skin Assessment Tool</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#040F09;
-  --bg2:#071410;
-  --bg3:#0A1A12;
-  --surface:#0D2018;
-  --surface2:#112618;
-  --glass:rgba(0,255,100,0.03);
-  --glass2:rgba(0,255,100,0.06);
+  --bg:#F7F2EA;
+  --paper:#FFFEFB;
+  --tint:#F1E8FA;
+  --tint2:#E9DCF8;
 
-  --green:#00C853;
-  --green2:#69F0AE;
-  --green3:#1DE9B6;
-  --green-dim:rgba(0,200,83,0.15);
-  --green-border:rgba(0,200,83,0.2);
-  --green-border2:rgba(0,200,83,0.35);
+  --purple:#6D3FC7;
+  --purple-deep:#4B2A8C;
+  --purple-soft:#9B78E0;
+  --purple-line:#DDCEF3;
 
-  --amber:#FFB300;
-  --amber-dim:rgba(255,179,0,0.12);
-  --amber-border:rgba(255,179,0,0.3);
+  --ink:#2B2438;
+  --ink2:#5B5266;
+  --ink3:#8A8296;
+  --ink4:#B4ACC0;
 
-  --red:#FF5252;
-  --red-dim:rgba(255,82,82,0.1);
+  --amber:#B4791A;
+  --amber-bg:#FBF0DC;
+  --amber-line:#EAD3A0;
 
-  --ink:#E8F5E9;
-  --ink2:#81C784;
-  --ink3:#4CAF50;
-  --ink4:rgba(129,199,132,0.45);
+  --green:#2F8F5B;
+  --green-bg:#E8F3EC;
+  --green-line:#C9E3D4;
 
-  --border:rgba(0,200,83,0.1);
-  --border2:rgba(0,200,83,0.22);
-  --r:8px;--r2:12px;--r3:18px;
+  --red:#B4453D;
+  --red-bg:#FBEAE8;
+  --red-line:#F0C9C5;
+
+  --r:10px;--r2:16px;--r3:22px;
   --mono:'IBM Plex Mono',monospace;
-  --body:'Inter',sans-serif;
+  --body:'Manrope',sans-serif;
+  --display:'Fraunces',serif;
 }
 
 body{
@@ -54,301 +54,795 @@ body{
   min-height:100vh;
 }
 
-/* subtle grid overlay */
 body::before{
   content:'';position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(0,200,83,0.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,200,83,0.025) 1px,transparent 1px);
-  background-size:32px 32px;
-  pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle at 1px 1px, rgba(109,63,199,0.09) 1px, transparent 0);
+  background-size:26px 26px;
+  pointer-events:none;z-index:0;opacity:.5;
 }
-
-/* ambient glow */
 body::after{
   content:'';position:fixed;inset:0;
-  background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(0,200,83,0.06),transparent 70%);
+  background:radial-gradient(ellipse 60% 45% at 82% -5%,rgba(109,63,199,0.10),transparent 70%),
+             radial-gradient(ellipse 50% 40% at 5% 100%,rgba(180,121,26,0.06),transparent 70%);
   pointer-events:none;z-index:0;
 }
 
-.wrap{max-width:860px;margin:0 auto;padding:40px 32px 80px;position:relative;z-index:1}
+.wrap{max-width:900px;margin:0 auto;padding:44px 32px 90px;position:relative;z-index:1}
 
 /* ── HEADER ── */
-.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:36px;gap:20px;flex-wrap:wrap}
-.header-left{}
-.logo{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;color:var(--ink3);text-transform:uppercase;margin-bottom:10px}
-.logo span{color:var(--green2)}
-h1{font-size:26px;font-weight:700;letter-spacing:-0.4px;color:var(--ink);margin-bottom:4px}
-.timestamp{font-family:var(--mono);font-size:11px;color:var(--ink4);letter-spacing:0.05em}
-.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;padding-top:4px}
-.btn{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:9px 18px;border-radius:var(--r);cursor:pointer;transition:all 0.18s ease;display:inline-flex;align-items:center;gap:7px;border:1px solid;font-weight:500}
-.btn-outline{background:transparent;border-color:var(--border2);color:var(--ink2)}
-.btn-outline:hover{background:var(--glass2);border-color:var(--green);color:var(--green2)}
-.btn-primary{background:var(--green-dim);border-color:var(--green);color:var(--green2)}
-.btn-primary:hover{background:rgba(0,200,83,0.22)}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:34px;gap:20px;flex-wrap:wrap}
+.brandmark{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.brand-icon{width:26px;height:26px;flex-shrink:0}
+.logo{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;color:var(--ink3);text-transform:uppercase}
+.logo span{color:var(--purple);font-weight:600}
+h1{font-family:var(--display);font-size:30px;font-weight:600;letter-spacing:-0.3px;color:var(--ink);margin-bottom:6px}
+.subhead{font-size:13.5px;color:var(--ink2);max-width:520px}
+.timestamp{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:0.04em}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;padding-top:6px}
+.btn{font-family:var(--mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:10px 18px;border-radius:var(--r);cursor:pointer;transition:all 0.18s ease;display:inline-flex;align-items:center;gap:7px;border:1px solid;font-weight:500;background:none}
+.btn-outline{background:var(--paper);border-color:var(--purple-line);color:var(--ink2)}
+.btn-outline:hover{background:var(--tint);border-color:var(--purple-soft);color:var(--purple-deep)}
+.btn-primary{background:var(--purple);border-color:var(--purple);color:#fff;box-shadow:0 4px 14px rgba(109,63,199,0.28)}
+.btn-primary:hover{background:var(--purple-deep);box-shadow:0 5px 18px rgba(75,42,140,0.34)}
+.btn:disabled{opacity:.6;cursor:wait}
 
-/* ── PATIENT META ── */
-.meta-bar{display:flex;gap:0;margin-bottom:28px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
-.meta-cell{padding:14px 22px;flex:1;border-right:1px solid var(--border)}
+/* ── FORM ── */
+.card{background:var(--paper);border:1px solid var(--purple-line);border-radius:var(--r2);padding:26px 28px;margin-bottom:20px;box-shadow:0 1px 0 rgba(75,42,140,0.03)}
+.card-title{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.card-sub{font-family:var(--mono);font-size:10.5px;color:var(--ink3);letter-spacing:0.06em;margin-bottom:18px}
+.field-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.field input,.field select{
+  font-family:var(--body);font-size:14px;font-weight:600;color:var(--ink);
+  background:var(--bg);border:1px solid var(--purple-line);border-radius:var(--r);
+  padding:10px 12px;outline:none;transition:border-color .15s;
+}
+.field input:focus,.field select:focus{border-color:var(--purple)}
+
+.abcde-block{margin-bottom:18px}
+.abcde-block:last-child{margin-bottom:0}
+.abcde-block-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.abcde-block-letter{font-family:var(--display);font-size:20px;font-weight:600;color:var(--purple)}
+.abcde-block-name{font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink2);font-weight:600}
+.pill-group{display:flex;gap:8px;flex-wrap:wrap}
+.pill{
+  font-family:var(--body);font-size:12.5px;font-weight:600;color:var(--ink2);
+  background:var(--bg);border:1px solid var(--purple-line);border-radius:999px;
+  padding:9px 16px;cursor:pointer;transition:all .15s;user-select:none;
+}
+.pill:hover{border-color:var(--purple-soft)}
+.pill.active{background:var(--purple);border-color:var(--purple);color:#fff}
+
+.chip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.chip{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:var(--ink2);font-weight:500;
+  background:var(--bg);border:1px solid var(--purple-line);border-radius:var(--r);
+  padding:11px 14px;cursor:pointer;transition:all .15s;user-select:none;
+}
+.chip:hover{border-color:var(--purple-soft)}
+.chip.active{background:var(--tint);border-color:var(--purple);color:var(--purple-deep)}
+.chip .box{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--purple-line);flex-shrink:0;position:relative;transition:all .15s}
+.chip.active .box{background:var(--purple);border-color:var(--purple)}
+.chip.active .box::after{content:'';position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+
+.dropzone{
+  border:1.5px dashed var(--purple-line);border-radius:var(--r2);
+  background:var(--bg);padding:28px 20px;text-align:center;cursor:pointer;
+  transition:all .15s;
+}
+.dropzone:hover,.dropzone.drag{border-color:var(--purple);background:var(--tint)}
+.dropzone-icon{width:34px;height:34px;margin:0 auto 10px;color:var(--purple-soft)}
+.dropzone-text{font-size:13px;color:var(--ink2);font-weight:600;margin-bottom:4px}
+.dropzone-sub{font-family:var(--mono);font-size:10.5px;color:var(--ink3)}
+.photo-preview{display:none;position:relative;border-radius:var(--r2);overflow:hidden;border:1px solid var(--purple-line);max-width:260px}
+.photo-preview img{display:block;width:100%;height:auto;max-height:260px;object-fit:cover}
+.photo-preview .photo-meta{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--paper)}
+.photo-preview .photo-name{font-family:var(--mono);font-size:10px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
+.photo-remove{font-family:var(--mono);font-size:10px;letter-spacing:0.05em;text-transform:uppercase;color:var(--red);background:none;border:none;cursor:pointer;font-weight:600}
+.photo-note{font-size:11.5px;color:var(--ink3);margin-top:10px;line-height:1.6}
+
+.run-row{display:flex;justify-content:flex-end;margin-top:6px}
+.btn-run{font-family:var(--mono);font-size:12px;letter-spacing:0.08em;text-transform:uppercase;padding:14px 30px;border-radius:var(--r);cursor:pointer;border:1px solid var(--purple);background:var(--purple);color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(109,63,199,0.28);transition:all .18s}
+.btn-run:hover{background:var(--purple-deep)}
+.error-msg{font-family:var(--mono);font-size:11px;color:var(--red);margin-top:10px;text-align:right;display:none}
+
+/* ── REPORT (shared with form styling) ── */
+#reportView{display:none}
+.meta-bar{display:flex;gap:0;margin-bottom:26px;background:var(--paper);border:1px solid var(--purple-line);border-radius:var(--r2);overflow:hidden;box-shadow:0 1px 0 rgba(75,42,140,0.03)}
+.meta-cell{padding:15px 22px;flex:1;border-right:1px solid var(--purple-line)}
 .meta-cell:last-child{border-right:none}
-.meta-label{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:5px}
-.meta-val{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:0.01em}
+.meta-label{font-family:var(--mono);font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.meta-val{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:0.01em}
 
-/* ── SCORE CARD ── */
-.score-card{background:var(--surface);border:1px solid var(--amber-border);border-radius:var(--r3);padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden}
-.score-card::before{content:'';position:absolute;top:0;right:0;width:240px;height:240px;background:radial-gradient(circle,rgba(255,179,0,0.05),transparent 70%);pointer-events:none}
-.score-risk-label{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.score-risk-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block;animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,179,0,0.5)}50%{box-shadow:0 0 0 6px rgba(255,179,0,0)}}
-.score-row{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
-.score-num{font-family:var(--mono);font-size:64px;font-weight:600;line-height:1;color:var(--amber);letter-spacing:-2px}
-.score-denom{font-family:var(--mono);font-size:22px;color:var(--ink4);font-weight:400}
-.score-bar-wrap{margin-bottom:16px}
-.score-bar-track{height:4px;background:rgba(255,179,0,0.12);border-radius:2px;overflow:hidden}
-.score-bar-fill{height:100%;width:27%;background:linear-gradient(90deg,var(--amber),rgba(255,179,0,0.6));border-radius:2px;transition:width 1s ease}
-.score-desc{font-size:13px;color:var(--ink2);line-height:1.65;max-width:620px}
+.score-card{background:var(--paper);border:1px solid var(--amber-line);border-radius:var(--r3);padding:30px 32px;margin-bottom:24px;position:relative;overflow:hidden;display:flex;align-items:center;gap:32px}
+.score-card::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(180,121,26,0.08),transparent 70%);pointer-events:none}
+.score-card.tier-low{border-color:var(--green-line)}
+.score-card.tier-low::before{background:radial-gradient(circle,rgba(47,143,91,0.08),transparent 70%)}
+.score-card.tier-high{border-color:var(--red-line)}
+.score-card.tier-high::before{background:radial-gradient(circle,rgba(180,69,61,0.08),transparent 70%)}
+.gauge-wrap{flex-shrink:0;position:relative;width:150px;height:150px}
+.gauge-wrap svg{width:100%;height:100%}
+.gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge-num{font-family:var(--mono);font-size:34px;font-weight:600;line-height:1}
+.gauge-denom{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.score-body{flex:1;min-width:0}
+.score-risk-label{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.score-risk-label::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+.score-desc{font-size:13.5px;color:var(--ink2);line-height:1.7;max-width:560px}
 
-/* ── SECTION LABEL ── */
-.sec-label{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec-label{font-family:var(--mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--purple-deep);margin-bottom:14px;display:flex;align-items:center;gap:10px;font-weight:600}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--purple-line)}
 
-/* ── ABCDE ── */
+.rphoto-wrap{margin-bottom:28px;display:none}
+.rphoto-card{background:var(--paper);border:1px solid var(--purple-line);border-radius:var(--r2);padding:16px;display:inline-block}
+.rphoto-card img{display:block;max-width:280px;max-height:280px;width:auto;height:auto;border-radius:var(--r);object-fit:cover}
+.rphoto-caption{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:10px;letter-spacing:0.03em}
+
 .abcde-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px}
-.abcde-cell{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px 14px;text-align:center;position:relative;overflow:hidden;transition:border-color 0.2s}
-.abcde-cell:hover{border-color:var(--border2)}
-.abcde-letter{font-family:var(--mono);font-size:28px;font-weight:600;line-height:1;margin-bottom:8px}
-.abcde-cell:nth-child(1) .abcde-letter{color:var(--green2)}
-.abcde-cell:nth-child(2) .abcde-letter{color:var(--green2)}
-.abcde-cell:nth-child(3) .abcde-letter{color:var(--green2)}
-.abcde-cell:nth-child(4) .abcde-letter{color:var(--green2)}
-.abcde-cell:nth-child(5) .abcde-letter{color:var(--green2)}
-.abcde-name{font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink4);margin-bottom:6px}
-.abcde-val{font-size:12px;font-weight:600}
-/* colour-code findings */
+.abcde-cell{background:var(--paper);border:1px solid var(--purple-line);border-radius:var(--r2);padding:18px 14px;text-align:center}
+.abcde-letter{font-family:var(--display);font-size:26px;font-weight:600;line-height:1;margin-bottom:8px;color:var(--purple)}
+.abcde-name{font-family:var(--mono);font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.abcde-val{font-size:12px;font-weight:700}
 .val-amber{color:var(--amber)}
-.val-green{color:var(--green3)}
-.val-neutral{color:var(--ink2)}
+.val-green{color:var(--green)}
+.val-red{color:var(--red)}
 
-/* ── DIAGNOSES ── */
 .dx-list{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
-.dx-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px;display:flex;align-items:center;gap:16px;transition:border-color 0.2s}
-.dx-item:hover{border-color:var(--border2)}
+.dx-item{background:var(--paper);border:1px solid var(--purple-line);border-radius:var(--r2);padding:16px 20px;display:flex;align-items:center;gap:16px}
 .dx-rank{font-family:var(--mono);font-size:10px;color:var(--ink4);min-width:24px}
-.dx-name{flex:1;font-size:14px;font-weight:600;color:var(--ink)}
-.dx-bar-wrap{width:160px;display:flex;align-items:center;gap:10px}
-.dx-bar-track{flex:1;height:3px;background:rgba(0,200,83,0.1);border-radius:2px;overflow:hidden}
-.dx-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),var(--green3))}
-.dx-pct{font-family:var(--mono);font-size:12px;font-weight:600;min-width:32px;text-align:right}
-.dx-item:nth-child(1) .dx-pct{color:var(--green2)}
-.dx-item:nth-child(2) .dx-pct{color:var(--green3)}
-.dx-item:nth-child(3) .dx-pct{color:var(--amber)}
-.dx-item:nth-child(4) .dx-pct{color:var(--amber)}
-.dx-item:nth-child(3) .dx-bar-fill,
-.dx-item:nth-child(4) .dx-bar-fill{background:linear-gradient(90deg,var(--amber),rgba(255,179,0,0.5))}
+.dx-name{flex:1;font-size:14px;font-weight:700;color:var(--ink)}
+.dx-bar-wrap{width:170px;display:flex;align-items:center;gap:10px}
+.dx-bar-track{flex:1;height:4px;background:var(--tint2);border-radius:2px;overflow:hidden}
+.dx-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--purple-soft))}
+.dx-pct{font-family:var(--mono);font-size:12px;font-weight:700;min-width:32px;text-align:right;color:var(--purple-deep)}
+.dx-item.is-risk .dx-pct{color:var(--amber)}
+.dx-item.is-risk .dx-bar-fill{background:linear-gradient(90deg,var(--amber),#D9A54A)}
 
-/* ── REFERRAL ── */
-.referral-card{background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:var(--r3);padding:24px 28px;margin-bottom:28px}
+.referral-card{border-radius:var(--r3);padding:24px 28px;margin-bottom:28px;border:1px solid}
+.referral-card.tier-low{background:var(--green-bg);border-color:var(--green-line)}
+.referral-card.tier-moderate{background:var(--amber-bg);border-color:var(--amber-line)}
+.referral-card.tier-high{background:var(--red-bg);border-color:var(--red-line)}
 .referral-title{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.referral-title span{font-size:16px}
-.referral-title h3{font-size:15px;font-weight:700;color:var(--amber);letter-spacing:-0.2px}
-.referral-desc{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:16px}
+.referral-title span{font-size:15px}
+.referral-title h3{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:-0.1px}
+.referral-desc{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:16px}
 .referral-actions{list-style:none;display:flex;flex-direction:column;gap:7px}
 .referral-actions li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--ink2)}
-.referral-actions li::before{content:'→';color:var(--amber);flex-shrink:0;margin-top:1px;font-family:var(--mono)}
 
-/* ── CLINICAL FLAGS ── */
-.flags-card{background:var(--red-dim);border:1px solid rgba(255,82,82,0.22);border-radius:var(--r2);padding:20px 24px;margin-bottom:28px}
+.flags-card{background:var(--red-bg);border:1px solid var(--red-line);border-radius:var(--r2);padding:20px 24px;margin-bottom:28px}
+.flags-card.none{background:var(--green-bg);border-color:var(--green-line)}
 .flags-card-title{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.flags-card-title::before{content:'⚑';font-size:12px}
-.flag-item{font-size:13px;color:var(--ink2);line-height:1.6}
+.flags-card.none .flags-card-title{color:var(--green)}
+.flag-item{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:4px}
+.flag-item:last-child{margin-bottom:0}
 
-/* ── FOOTER ── */
-.report-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.rf-left{font-family:var(--mono);font-size:10px;color:var(--ink4);line-height:1.7}
-.rf-disclaimer{font-family:var(--mono);font-size:10px;color:rgba(255,82,82,0.5);letter-spacing:0.06em}
-
-/* ── PRINT ── */
-@media print{
-  body{background:#fff;color:#111}
-  body::before,body::after{display:none}
-  .header-actions{display:none}
-  .score-card{border-color:#ddd}
-  .score-num{color:#B8860B}
-  .score-risk-label{color:#B8860B}
-  .abcde-letter{color:#2e7d32 !important}
-  .dx-pct{color:#2e7d32 !important}
-  .referral-title h3{color:#B8860B}
-  .referral-card,.flags-card{background:#fffde7;border-color:#ddd}
-  .meta-bar,.score-card,.abcde-cell,.dx-item{background:#f9f9f9;border-color:#ddd}
-  .sec-label,.abcde-name,.meta-label,.rf-left{color:#666}
-  .meta-val,.dx-name,.abcde-val,.ink{color:#111}
-  .ink2{color:#333}
-}
+.report-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--purple-line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.rf-left{font-family:var(--mono);font-size:10px;color:var(--ink3);line-height:1.7}
+.rf-disclaimer{font-family:var(--mono);font-size:10px;color:var(--red);opacity:.75;letter-spacing:0.05em}
 
 @media(max-width:640px){
-  .wrap{padding:24px 16px 60px}
+  .wrap{padding:26px 16px 60px}
+  .field-grid{grid-template-columns:repeat(2,1fr)}
+  .chip-grid{grid-template-columns:1fr}
   .abcde-grid{grid-template-columns:repeat(3,1fr)}
   .meta-bar{flex-wrap:wrap}
-  .meta-cell{min-width:50%;border-bottom:1px solid var(--border)}
+  .meta-cell{min-width:50%;border-bottom:1px solid var(--purple-line)}
   .dx-bar-wrap{width:100px}
-  h1{font-size:20px}
-  .score-num{font-size:48px}
+  h1{font-size:22px}
+  .score-card{flex-direction:column;align-items:flex-start}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-left">
-      <div class="logo">Derma<span>Triage</span> · Clinical Skin Assessment Tool</div>
-      <h1>Triage Assessment Report</h1>
-      <div class="timestamp">Assessed 10:23 AM — Score: 27/100 — Report generated: 20 Jun 2026</div>
-    </div>
-    <div class="header-actions">
-      <a class="btn btn-outline" href="/concept-lab/">← Concept Lab</a>
-      <button class="btn btn-outline" onclick="window.print()">⎙ Print</button>
-      <button class="btn btn-primary" onclick="location.reload()">↺ New Patient</button>
-    </div>
-  </div>
-
-  <!-- PATIENT META -->
-  <div class="meta-bar">
-    <div class="meta-cell">
-      <div class="meta-label">Age</div>
-      <div class="meta-val">37</div>
-    </div>
-    <div class="meta-cell">
-      <div class="meta-label">Sex</div>
-      <div class="meta-val">F</div>
-    </div>
-    <div class="meta-cell">
-      <div class="meta-label">Fitzpatrick</div>
-      <div class="meta-val">Type 3</div>
-    </div>
-    <div class="meta-cell">
-      <div class="meta-label">Location</div>
-      <div class="meta-val">Arms / Hands</div>
-    </div>
-    <div class="meta-cell">
-      <div class="meta-label">Risk Factors</div>
-      <div class="meta-val">1 noted</div>
-    </div>
-  </div>
-
-  <!-- SCORE CARD -->
-  <div class="score-card">
-    <div class="score-risk-label">Moderate Risk</div>
-    <div class="score-row">
-      <div class="score-num">27</div>
-      <div class="score-denom">/ 100</div>
-    </div>
-    <div class="score-bar-wrap">
-      <div class="score-bar-track"><div class="score-bar-fill"></div></div>
-    </div>
-    <div class="score-desc">Several atypical features are present. While not immediately alarming, the combination of findings warrants dermatological review within a defined timeframe.</div>
-  </div>
-
-  <!-- ABCDE -->
-  <div class="sec-label">ABCDE Breakdown</div>
-  <div class="abcde-grid">
-    <div class="abcde-cell">
-      <div class="abcde-letter">A</div>
-      <div class="abcde-name">Asymmetry</div>
-      <div class="abcde-val val-amber">Slight</div>
-    </div>
-    <div class="abcde-cell">
-      <div class="abcde-letter">B</div>
-      <div class="abcde-name">Border</div>
-      <div class="abcde-val val-amber">Irregular</div>
-    </div>
-    <div class="abcde-cell">
-      <div class="abcde-letter">C</div>
-      <div class="abcde-name">Color</div>
-      <div class="abcde-val val-green">Uniform</div>
-    </div>
-    <div class="abcde-cell">
-      <div class="abcde-letter">D</div>
-      <div class="abcde-name">Diameter</div>
-      <div class="abcde-val val-green">&lt;6mm</div>
-    </div>
-    <div class="abcde-cell">
-      <div class="abcde-letter">E</div>
-      <div class="abcde-name">Evolution</div>
-      <div class="abcde-val val-green">Stable</div>
-    </div>
-  </div>
-
-  <!-- DIFFERENTIAL DIAGNOSES -->
-  <div class="sec-label">Differential Diagnoses</div>
-  <div class="dx-list">
-    <div class="dx-item">
-      <div class="dx-rank">#1</div>
-      <div class="dx-name">Seborrhoeic Keratosis</div>
-      <div class="dx-bar-wrap">
-        <div class="dx-bar-track"><div class="dx-bar-fill" style="width:50%"></div></div>
-        <div class="dx-pct">50%</div>
+  <!-- ══════════════ FORM VIEW ══════════════ -->
+  <div id="formView">
+    <div class="header">
+      <div class="header-left">
+        <div class="brandmark">
+          <svg class="brand-icon" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="11.5" stroke="#6D3FC7" stroke-width="1.4"/>
+            <circle cx="13" cy="13" r="4.5" stroke="#6D3FC7" stroke-width="1.4"/>
+            <circle cx="13" cy="13" r="1.4" fill="#6D3FC7"/>
+          </svg>
+          <div class="logo">Derma<span>Triage</span> · Clinical Skin Assessment Tool</div>
+        </div>
+        <h1>New Lesion Assessment</h1>
+        <div class="subhead">Enter patient details and lesion characteristics to generate a triage score, differential diagnosis, and referral guidance.</div>
       </div>
     </div>
-    <div class="dx-item">
-      <div class="dx-rank">#2</div>
-      <div class="dx-name">Benign Naevus</div>
-      <div class="dx-bar-wrap">
-        <div class="dx-bar-track"><div class="dx-bar-fill" style="width:40%"></div></div>
-        <div class="dx-pct">40%</div>
+
+    <div class="card">
+      <div class="card-title">Patient Demographics</div>
+      <div class="card-sub">Required for risk-adjusted scoring</div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="f-age">Age</label>
+          <input type="number" id="f-age" min="0" max="120" placeholder=""/>
+        </div>
+        <div class="field">
+          <label for="f-sex">Sex</label>
+          <select id="f-sex">
+            <option value="">Select…</option>
+            <option value="F">Female</option>
+            <option value="M">Male</option>
+            <option value="O">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-fitz">Fitzpatrick Type</label>
+          <select id="f-fitz">
+            <option value="">Select…</option>
+            <option value="1">Type 1</option>
+            <option value="2">Type 2</option>
+            <option value="3">Type 3</option>
+            <option value="4">Type 4</option>
+            <option value="5">Type 5</option>
+            <option value="6">Type 6</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-loc">Lesion Location</label>
+          <select id="f-loc">
+            <option value="">Select…</option>
+            <option value="Face/Scalp">Face / Scalp</option>
+            <option value="Trunk">Trunk</option>
+            <option value="Arms/Hands">Arms / Hands</option>
+            <option value="Legs/Feet">Legs / Feet</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
       </div>
     </div>
-    <div class="dx-item">
-      <div class="dx-rank">#3</div>
-      <div class="dx-name">Melanoma</div>
-      <div class="dx-bar-wrap">
-        <div class="dx-bar-track"><div class="dx-bar-fill" style="width:20%"></div></div>
-        <div class="dx-pct">20%</div>
+
+    <div class="card">
+      <div class="card-title">ABCDE Assessment</div>
+      <div class="card-sub">Standard dermoscopic asymmetry / border / colour / diameter / evolution criteria</div>
+
+      <div class="abcde-block">
+        <div class="abcde-block-head"><span class="abcde-block-letter">A</span><span class="abcde-block-name">Asymmetry</span></div>
+        <div class="pill-group" data-group="asymmetry">
+          <div class="pill" data-value="Symmetric">Symmetric</div>
+          <div class="pill" data-value="Slight">Slight</div>
+          <div class="pill" data-value="Marked">Marked</div>
+        </div>
+      </div>
+      <div class="abcde-block">
+        <div class="abcde-block-head"><span class="abcde-block-letter">B</span><span class="abcde-block-name">Border</span></div>
+        <div class="pill-group" data-group="border">
+          <div class="pill" data-value="Regular">Regular</div>
+          <div class="pill" data-value="Irregular">Irregular</div>
+        </div>
+      </div>
+      <div class="abcde-block">
+        <div class="abcde-block-head"><span class="abcde-block-letter">C</span><span class="abcde-block-name">Color</span></div>
+        <div class="pill-group" data-group="color">
+          <div class="pill" data-value="Uniform">Uniform</div>
+          <div class="pill" data-value="Variegated">Variegated (2–3 shades)</div>
+          <div class="pill" data-value="Multiple">Multiple (4+ shades)</div>
+        </div>
+      </div>
+      <div class="abcde-block">
+        <div class="abcde-block-head"><span class="abcde-block-letter">D</span><span class="abcde-block-name">Diameter</span></div>
+        <div class="pill-group" data-group="diameter">
+          <div class="pill" data-value="<6mm">&lt; 6mm</div>
+          <div class="pill" data-value="6-10mm">6–10mm</div>
+          <div class="pill" data-value=">10mm">&gt; 10mm</div>
+        </div>
+      </div>
+      <div class="abcde-block">
+        <div class="abcde-block-head"><span class="abcde-block-letter">E</span><span class="abcde-block-name">Evolution</span></div>
+        <div class="pill-group" data-group="evolution">
+          <div class="pill" data-value="Stable">Stable</div>
+          <div class="pill" data-value="Recent change">Recent change</div>
+          <div class="pill" data-value="Rapid change">Rapid change</div>
+        </div>
       </div>
     </div>
-    <div class="dx-item">
-      <div class="dx-rank">#4</div>
-      <div class="dx-name">Squamous Cell Carcinoma</div>
-      <div class="dx-bar-wrap">
-        <div class="dx-bar-track"><div class="dx-bar-fill" style="width:15%"></div></div>
-        <div class="dx-pct">15%</div>
+
+    <div class="card">
+      <div class="card-title">Risk Factors</div>
+      <div class="card-sub">Select all that apply</div>
+      <div class="chip-grid" id="riskFactors">
+        <div class="chip" data-value="Family history of melanoma"><span class="box"></span>Family history of melanoma</div>
+        <div class="chip" data-value="Personal history of skin cancer"><span class="box"></span>Personal history of skin cancer</div>
+        <div class="chip" data-value="Significant sun exposure / sunburn history"><span class="box"></span>Significant sun exposure / sunburn history</div>
+        <div class="chip" data-value="Immunosuppression"><span class="box"></span>Immunosuppression</div>
+        <div class="chip" data-value="Many moles (50+)"><span class="box"></span>Many moles (50+)</div>
+        <div class="chip" data-value="Lesion bleeding, itching, or crusting"><span class="box"></span>Lesion bleeding, itching, or crusting</div>
       </div>
     </div>
-  </div>
 
-  <!-- REFERRAL -->
-  <div class="sec-label">Referral Guidance</div>
-  <div class="referral-card">
-    <div class="referral-title">
-      <span>⚠</span>
-      <h3>Dermatology Referral — Within 4 Weeks</h3>
+    <div class="card">
+      <div class="card-title">Lesion Photograph</div>
+      <div class="card-sub">Optional — for documentation and referral only, not used in scoring</div>
+
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoFile(this.files[0])"/>
+
+      <div class="dropzone" id="dropzone" onclick="document.getElementById('photoInput').click()">
+        <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="8.5" cy="10" r="1.5" fill="currentColor"/>
+          <path d="M21 15l-5.5-5.5a1 1 0 0 0-1.4 0L6 18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <div class="dropzone-text">Click to upload or drag a photo here</div>
+        <div class="dropzone-sub">JPG, PNG · lesion or abrasion area</div>
+      </div>
+
+      <div class="photo-preview" id="photoPreview">
+        <img id="photoPreviewImg" src="" alt="Lesion photo preview"/>
+        <div class="photo-meta">
+          <span class="photo-name" id="photoName">—</span>
+          <button class="photo-remove" onclick="removePhoto(event)">Remove</button>
+        </div>
+      </div>
+
+      <div class="photo-note">Photos are processed locally in your browser and are not uploaded anywhere. They're included in the report for visual reference alongside the clinician's own examination.</div>
     </div>
-    <div class="referral-desc">Refer to dermatology for closer evaluation. Dermoscopy and possible biopsy indicated.</div>
-    <ul class="referral-actions">
-      <li>Refer to dermatology within 4 weeks</li>
-      <li>Request dermoscopy assessment</li>
-      <li>If resources limited, consider teledermatology pathway</li>
-      <li>Document with photograph before referral</li>
-    </ul>
-  </div>
 
-  <!-- CLINICAL FLAGS -->
-  <div class="sec-label">Clinical Action Flags</div>
-  <div class="flags-card">
-    <div class="flags-card-title">Active Flag</div>
-    <div class="flag-item">Recent onset lesion — monitor closely or consider accelerated referral if features worsen.</div>
-  </div>
-
-  <!-- FOOTER -->
-  <div class="report-footer">
-    <div class="rf-left">
-      DermaTriage v1.0 · Report generated 20 Jun 2026 at 10:23 AM<br/>
-      Clinician: [Not specified] · Facility: [Not specified]
+    <div class="run-row">
+      <button class="btn-run" onclick="runAssessment()">Run Assessment →</button>
     </div>
-    <div class="rf-disclaimer">Not for standalone diagnostic use</div>
+    <div class="error-msg" id="errorMsg">Please complete all required fields (age, sex, Fitzpatrick type, location, and all five ABCDE criteria).</div>
+  </div>
+
+  <!-- ══════════════ REPORT VIEW ══════════════ -->
+  <div id="reportView">
+    <div class="header">
+      <div class="header-left">
+        <div class="brandmark">
+          <svg class="brand-icon" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="11.5" stroke="#6D3FC7" stroke-width="1.4"/>
+            <circle cx="13" cy="13" r="4.5" stroke="#6D3FC7" stroke-width="1.4"/>
+            <circle cx="13" cy="13" r="1.4" fill="#6D3FC7"/>
+          </svg>
+          <div class="logo">Derma<span>Triage</span> · Clinical Skin Assessment Tool</div>
+        </div>
+        <h1>Triage Assessment Report</h1>
+        <div class="timestamp" id="rTimestamp"></div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" onclick="window.print()">⎙ Print</button>
+        <button class="btn btn-primary" id="pdfBtn" onclick="downloadPDF()">⬇ Download PDF</button>
+        <button class="btn btn-outline" onclick="newAssessment()">↺ New Patient</button>
+      </div>
+    </div>
+
+    <div id="report-root">
+      <div class="meta-bar">
+        <div class="meta-cell"><div class="meta-label">Age</div><div class="meta-val" id="rAge">—</div></div>
+        <div class="meta-cell"><div class="meta-label">Sex</div><div class="meta-val" id="rSex">—</div></div>
+        <div class="meta-cell"><div class="meta-label">Fitzpatrick</div><div class="meta-val" id="rFitz">—</div></div>
+        <div class="meta-cell"><div class="meta-label">Location</div><div class="meta-val" id="rLoc">—</div></div>
+        <div class="meta-cell"><div class="meta-label">Risk Factors</div><div class="meta-val" id="rRiskCount">—</div></div>
+      </div>
+
+      <div class="rphoto-wrap" id="rPhotoWrap">
+        <div class="sec-label">Lesion Photograph</div>
+        <div class="rphoto-card">
+          <img id="rPhotoImg" src="" alt="Lesion photograph"/>
+          <div class="rphoto-caption" id="rPhotoCaption">—</div>
+        </div>
+      </div>
+
+      <div class="score-card" id="scoreCard">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="64" fill="none" stroke="#E9DCF8" stroke-width="10" opacity="0.6"/>
+            <circle id="gaugeArc" cx="75" cy="75" r="64" fill="none" stroke="#B4791A" stroke-width="10"
+                    stroke-linecap="round" stroke-dasharray="402.1" stroke-dashoffset="402.1"
+                    transform="rotate(-90 75 75)" style="transition:stroke-dashoffset 1s ease, stroke 0.3s ease"/>
+          </svg>
+          <div class="gauge-center">
+            <div class="gauge-num" id="gaugeNum">0</div>
+            <div class="gauge-denom">/ 100</div>
+          </div>
+        </div>
+        <div class="score-body">
+          <div class="score-risk-label" id="riskLabel">—</div>
+          <div class="score-desc" id="scoreDesc">—</div>
+        </div>
+      </div>
+
+      <div class="sec-label">ABCDE Breakdown</div>
+      <div class="abcde-grid" id="abcdeGrid"></div>
+
+      <div class="sec-label">Differential Diagnoses</div>
+      <div class="dx-list" id="dxList"></div>
+
+      <div class="sec-label">Referral Guidance</div>
+      <div class="referral-card" id="referralCard">
+        <div class="referral-title"><span id="referralIcon">—</span><h3 id="referralTitle">—</h3></div>
+        <div class="referral-desc" id="referralDesc">—</div>
+        <ul class="referral-actions" id="referralActions"></ul>
+      </div>
+
+      <div class="sec-label">Clinical Action Flags</div>
+      <div class="flags-card" id="flagsCard">
+        <div class="flags-card-title" id="flagsTitle">Active Flags</div>
+        <div id="flagsList"></div>
+      </div>
+
+      <div class="report-footer">
+        <div class="rf-left">
+          DermaTriage v1.0 · Report generated <span id="rFooterTime"></span><br/>
+          Clinician: [Not specified] · Facility: [Not specified]
+        </div>
+        <div class="rf-disclaimer">Not for standalone diagnostic use</div>
+      </div>
+    </div>
   </div>
 
 </div>
+
+<script>
+/* ── SELECTION STATE ── */
+const abcdeState = {asymmetry:null, border:null, color:null, diameter:null, evolution:null};
+const riskState = new Set();
+
+document.querySelectorAll('.pill-group').forEach(group=>{
+  const key = group.dataset.group;
+  group.querySelectorAll('.pill').forEach(pill=>{
+    pill.addEventListener('click', ()=>{
+      group.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      abcdeState[key] = pill.dataset.value;
+    });
+  });
+});
+
+document.querySelectorAll('#riskFactors .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    const v = chip.dataset.value;
+    if(riskState.has(v)){ riskState.delete(v); chip.classList.remove('active'); }
+    else{ riskState.add(v); chip.classList.add('active'); }
+  });
+});
+
+/* ── PHOTO UPLOAD ── */
+let lesionPhoto = null; // {dataUrl, name}
+
+function handlePhotoFile(file){
+  if(!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    lesionPhoto = {dataUrl: e.target.result, name: file.name};
+    document.getElementById('photoPreviewImg').src = lesionPhoto.dataUrl;
+    document.getElementById('photoName').textContent = file.name;
+    document.getElementById('photoPreview').style.display = 'block';
+    document.getElementById('dropzone').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(e){
+  e.stopPropagation();
+  lesionPhoto = null;
+  document.getElementById('photoInput').value = '';
+  document.getElementById('photoPreview').style.display = 'none';
+  document.getElementById('dropzone').style.display = 'block';
+}
+
+const dz = document.getElementById('dropzone');
+['dragenter','dragover'].forEach(evt=>{
+  dz.addEventListener(evt, (e)=>{ e.preventDefault(); e.stopPropagation(); dz.classList.add('drag'); });
+});
+['dragleave','drop'].forEach(evt=>{
+  dz.addEventListener(evt, (e)=>{ e.preventDefault(); e.stopPropagation(); dz.classList.remove('drag'); });
+});
+dz.addEventListener('drop', (e)=>{
+  const file = e.dataTransfer.files && e.dataTransfer.files[0];
+  if(file) handlePhotoFile(file);
+});
+
+/* ── SCORING ENGINE ── */
+function computeScore(inputs){
+  let score = 0;
+  const {asymmetry, border, color, diameter, evolution, age, fitz, riskFactors} = inputs;
+
+  score += {Symmetric:0,'Slight':8,'Marked':18}[asymmetry] || 0;
+  score += {Regular:0,'Irregular':12}[border] || 0;
+  score += {Uniform:0,'Variegated':10,'Multiple':20}[color] || 0;
+  score += {'<6mm':0,'6-10mm':6,'>10mm':14}[diameter] || 0;
+  score += {Stable:0,'Recent change':14,'Rapid change':24}[evolution] || 0;
+
+  riskFactors.forEach(()=>{ score += 4; });
+
+  const fitzNum = parseInt(fitz,10);
+  if(fitzNum<=2) score += 5;
+  else if(fitzNum<=4) score += 2;
+
+  if(age && parseInt(age,10) >= 50) score += 5;
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+function computeDifferentials(inputs){
+  const {asymmetry, border, color, diameter, evolution, age, fitz, riskFactors} = inputs;
+  const has = v => riskFactors.includes(v);
+  const fitzNum = parseInt(fitz,10);
+
+  let naevus = 60;
+  if(asymmetry==='Marked') naevus -= 25; else if(asymmetry==='Slight') naevus -= 8;
+  if(border==='Irregular') naevus -= 15;
+  if(color==='Variegated') naevus -= 8; else if(color==='Multiple') naevus -= 18;
+  if(evolution==='Recent change') naevus -= 12; else if(evolution==='Rapid change') naevus -= 25;
+  naevus = Math.max(2, Math.min(90, naevus));
+
+  let sebK = 40;
+  if(age && parseInt(age,10) >= 50) sebK += 15;
+  if(evolution==='Rapid change') sebK -= 18;
+  if(asymmetry==='Marked') sebK -= 10;
+  if(border==='Irregular') sebK -= 5;
+  sebK = Math.max(2, Math.min(85, sebK));
+
+  let melanoma = 3;
+  if(asymmetry==='Slight') melanoma += 8; else if(asymmetry==='Marked') melanoma += 22;
+  if(border==='Irregular') melanoma += 15;
+  if(color==='Variegated') melanoma += 10; else if(color==='Multiple') melanoma += 22;
+  if(diameter==='6-10mm') melanoma += 7; else if(diameter==='>10mm') melanoma += 16;
+  if(evolution==='Recent change') melanoma += 12; else if(evolution==='Rapid change') melanoma += 26;
+  if(has('Family history of melanoma')) melanoma += 8;
+  if(has('Personal history of skin cancer')) melanoma += 8;
+  if(has('Many moles (50+)')) melanoma += 5;
+  if(has('Significant sun exposure / sunburn history')) melanoma += 5;
+  if(fitzNum<=2) melanoma += 8;
+  melanoma = Math.max(0, Math.min(95, Math.round(melanoma)));
+
+  let scc = 5;
+  if(has('Significant sun exposure / sunburn history')) scc += 10;
+  if(has('Immunosuppression')) scc += 14;
+  if(has('Personal history of skin cancer')) scc += 8;
+  if(has('Lesion bleeding, itching, or crusting')) scc += 16;
+  if(evolution==='Rapid change') scc += 10; else if(evolution==='Recent change') scc += 5;
+  if(border==='Irregular') scc += 6;
+  if(fitzNum<=2) scc += 6;
+  scc = Math.max(0, Math.min(90, Math.round(scc)));
+
+  const list = [
+    {name:'Benign Naevus', pct:Math.round(naevus), malignant:false},
+    {name:'Seborrhoeic Keratosis', pct:Math.round(sebK), malignant:false},
+    {name:'Melanoma', pct:melanoma, malignant:true},
+    {name:'Squamous Cell Carcinoma', pct:scc, malignant:true}
+  ];
+  list.sort((a,b)=>b.pct-a.pct);
+  return list;
+}
+
+function computeFlags(inputs){
+  const {evolution, riskFactors, age} = inputs;
+  const has = v => riskFactors.includes(v);
+  const flags = [];
+  if(has('Lesion bleeding, itching, or crusting')) flags.push('Lesion reports bleeding, itching, or crusting — prioritize clinical exam.');
+  if(evolution==='Rapid change') flags.push('Rapid evolution reported — consider accelerated referral regardless of composite score.');
+  if(has('Immunosuppression')) flags.push('Immunosuppressed patient — lower threshold for biopsy and referral.');
+  if(age && parseInt(age,10) < 18) flags.push('Pediatric patient — atypical lesions in this age group warrant careful specialist evaluation.');
+  if(has('Personal history of skin cancer')) flags.push('Prior skin cancer history — evaluate as recurrence or new primary until proven otherwise.');
+  return flags;
+}
+
+function getTier(score){
+  if(score < 15) return 'low';
+  if(score < 40) return 'moderate';
+  return 'high';
+}
+
+function getReferral(tier, flags){
+  const urgent = tier==='high' || flags.length>0 && tier!=='low';
+  if(tier==='low'){
+    return {
+      icon:'✅', title:'Routine Monitoring',
+      desc:'This lesion does not require urgent specialist referral based on current findings.',
+      actions:[
+        'Document with photograph and measure at next visit',
+        'Reassess in 3–6 months or sooner if patient notices change',
+        'Educate patient on self-monitoring (ABCDE signs)'
+      ]
+    };
+  }
+  if(tier==='moderate'){
+    return {
+      icon:'⚠', title:'Dermatology Referral — Within 4 Weeks',
+      desc:'Refer to dermatology for closer evaluation. Dermoscopy and possible biopsy indicated.',
+      actions:[
+        'Refer to dermatology within 4 weeks',
+        'Request dermoscopy assessment',
+        'If resources limited, consider teledermatology pathway',
+        'Document with photograph before referral'
+      ]
+    };
+  }
+  return {
+    icon:'🔴', title:'Urgent Referral — Within 2 Weeks',
+    desc:'Findings are consistent with a high-risk lesion. Expedited specialist evaluation is warranted.',
+    actions:[
+      'Refer under 2-week-wait / urgent suspected-cancer pathway',
+      'Request dermoscopy and biopsy planning',
+      'Advise patient on warning signs pending review',
+      'Flag for same-week evaluation if lesion is bleeding or rapidly changing'
+    ]
+  };
+}
+
+const scoreDescByTier = {
+  low: 'Assessment findings are largely within expected normal ranges. No strongly concerning ABCDE features detected. Continued routine monitoring recommended.',
+  moderate: 'Several atypical features are present. While not immediately alarming, the combination of findings warrants dermatological review within a defined timeframe.',
+  high: 'Multiple high-risk ABCDE features and/or risk factors are present. This combination substantially raises suspicion for malignancy and warrants prompt specialist evaluation.'
+};
+
+const tierColor = {low:'var(--green)', moderate:'var(--amber)', high:'var(--red)'};
+const tierColorHex = {low:'#2F8F5B', moderate:'#B4791A', high:'#B4453D'};
+
+/* ── RUN ── */
+function runAssessment(){
+  const age = document.getElementById('f-age').value;
+  const sex = document.getElementById('f-sex').value;
+  const fitz = document.getElementById('f-fitz').value;
+  const loc = document.getElementById('f-loc').value;
+  const {asymmetry, border, color, diameter, evolution} = abcdeState;
+  const riskFactors = Array.from(riskState);
+
+  if(!age || !sex || !fitz || !loc || !asymmetry || !border || !color || !diameter || !evolution){
+    document.getElementById('errorMsg').style.display = 'block';
+    return;
+  }
+  document.getElementById('errorMsg').style.display = 'none';
+
+  const inputs = {age, sex, fitz, loc, asymmetry, border, color, diameter, evolution, riskFactors};
+  const score = computeScore(inputs);
+  const tier = getTier(score);
+  const differentials = computeDifferentials(inputs);
+  const flags = computeFlags(inputs);
+  const referral = getReferral(tier, flags);
+
+  renderReport({inputs, score, tier, differentials, flags, referral});
+
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('reportView').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderReport(data){
+  const {inputs, score, tier, differentials, flags, referral} = data;
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  const dateStr = now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+
+  document.getElementById('rTimestamp').textContent = `Assessed ${timeStr} — Score: ${score}/100 — Report generated: ${dateStr}`;
+  document.getElementById('rFooterTime').textContent = `${dateStr} at ${timeStr}`;
+
+  document.getElementById('rAge').textContent = inputs.age;
+  document.getElementById('rSex').textContent = inputs.sex;
+  document.getElementById('rFitz').textContent = 'Type ' + inputs.fitz;
+  document.getElementById('rLoc').textContent = inputs.loc.replace('/', ' / ');
+  document.getElementById('rRiskCount').textContent = inputs.riskFactors.length + ' noted';
+
+  // photo
+  const photoWrap = document.getElementById('rPhotoWrap');
+  if(lesionPhoto){
+    document.getElementById('rPhotoImg').src = lesionPhoto.dataUrl;
+    document.getElementById('rPhotoCaption').textContent = `${lesionPhoto.name} · ${inputs.loc.replace('/',' / ')} · captured ${dateStr}`;
+    photoWrap.style.display = 'block';
+  }else{
+    photoWrap.style.display = 'none';
+  }
+
+  // gauge
+  const circumference = 402.1;
+  const offset = circumference * (1 - score/100);
+  const arc = document.getElementById('gaugeArc');
+  arc.style.stroke = tierColorHex[tier];
+  document.getElementById('gaugeNum').style.color = tierColorHex[tier];
+  document.getElementById('gaugeNum').textContent = score;
+  requestAnimationFrame(()=>{ arc.style.strokeDashoffset = offset; });
+
+  const scoreCard = document.getElementById('scoreCard');
+  scoreCard.className = 'score-card tier-' + tier;
+  const riskLabel = document.getElementById('riskLabel');
+  riskLabel.textContent = tier==='low' ? 'Low Risk' : tier==='moderate' ? 'Moderate Risk' : 'High Risk';
+  riskLabel.style.color = tierColorHex[tier];
+  document.getElementById('scoreDesc').textContent = scoreDescByTier[tier];
+
+  // abcde grid
+  const abcdeMeta = [
+    {letter:'A', name:'Asymmetry', val:inputs.asymmetry, cls:inputs.asymmetry==='Symmetric'?'val-green':inputs.asymmetry==='Slight'?'val-amber':'val-red'},
+    {letter:'B', name:'Border', val:inputs.border, cls:inputs.border==='Regular'?'val-green':'val-amber'},
+    {letter:'C', name:'Color', val:inputs.color, cls:inputs.color==='Uniform'?'val-green':inputs.color==='Variegated'?'val-amber':'val-red'},
+    {letter:'D', name:'Diameter', val:inputs.diameter, cls:inputs.diameter==='<6mm'?'val-green':inputs.diameter==='6-10mm'?'val-amber':'val-red'},
+    {letter:'E', name:'Evolution', val:inputs.evolution, cls:inputs.evolution==='Stable'?'val-green':inputs.evolution==='Recent change'?'val-amber':'val-red'}
+  ];
+  document.getElementById('abcdeGrid').innerHTML = abcdeMeta.map(a=>`
+    <div class="abcde-cell">
+      <div class="abcde-letter">${a.letter}</div>
+      <div class="abcde-name">${a.name}</div>
+      <div class="abcde-val ${a.cls}">${a.val}</div>
+    </div>
+  `).join('');
+
+  // differentials
+  document.getElementById('dxList').innerHTML = differentials.map((d,i)=>`
+    <div class="dx-item ${d.malignant?'is-risk':''}">
+      <div class="dx-rank">#${i+1}</div>
+      <div class="dx-name">${d.name}</div>
+      <div class="dx-bar-wrap">
+        <div class="dx-bar-track"><div class="dx-bar-fill" style="width:${d.pct}%"></div></div>
+        <div class="dx-pct">${d.pct}%</div>
+      </div>
+    </div>
+  `).join('');
+
+  // referral
+  const referralCard = document.getElementById('referralCard');
+  referralCard.className = 'referral-card tier-' + tier;
+  document.getElementById('referralIcon').textContent = referral.icon;
+  const rt = document.getElementById('referralTitle');
+  rt.textContent = referral.title;
+  rt.style.color = tierColorHex[tier];
+  document.getElementById('referralDesc').textContent = referral.desc;
+  document.getElementById('referralActions').innerHTML = referral.actions.map(a=>`<li style="color:var(--ink2)"><span style="color:${tierColorHex[tier]};font-family:var(--mono);flex-shrink:0">→</span> ${a}</li>`).join('');
+
+  // flags
+  const flagsCard = document.getElementById('flagsCard');
+  if(flags.length===0){
+    flagsCard.className = 'flags-card none';
+    document.getElementById('flagsTitle').textContent = 'No Active Flags';
+    document.getElementById('flagsList').innerHTML = `<div class="flag-item">No high-priority clinical flags identified at this time.</div>`;
+  }else{
+    flagsCard.className = 'flags-card';
+    document.getElementById('flagsTitle').textContent = 'Active Flags';
+    document.getElementById('flagsList').innerHTML = flags.map(f=>`<div class="flag-item">${f}</div>`).join('');
+  }
+}
+
+function newAssessment(){
+  document.getElementById('reportView').style.display = 'none';
+  document.getElementById('formView').style.display = 'block';
+  document.querySelectorAll('.pill.active').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.chip.active').forEach(c=>c.classList.remove('active'));
+  Object.keys(abcdeState).forEach(k=>abcdeState[k]=null);
+  riskState.clear();
+  document.getElementById('f-age').value = '';
+  document.getElementById('f-sex').value = '';
+  document.getElementById('f-fitz').value = '';
+  document.getElementById('f-loc').value = '';
+  lesionPhoto = null;
+  document.getElementById('photoInput').value = '';
+  document.getElementById('photoPreview').style.display = 'none';
+  document.getElementById('dropzone').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function downloadPDF(){
+  const btn = document.getElementById('pdfBtn');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⋯ Preparing PDF';
+
+  const actions = document.querySelector('#reportView .header-actions');
+  actions.style.visibility = 'hidden';
+
+  const opt = {
+    margin:       [10,10,10,10],
+    filename:     'DermaTriage-Report.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, backgroundColor: '#F7F2EA', useCORS: true },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(document.getElementById('report-root')).save().then(()=>{
+    actions.style.visibility = 'visible';
+    btn.disabled = false;
+    btn.innerHTML = original;
+  }).catch(()=>{
+    actions.style.visibility = 'visible';
+    btn.disabled = false;
+    btn.innerHTML = original;
+  });
+}
+</script>
+
 </body>
 </html>

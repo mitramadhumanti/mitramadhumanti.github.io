@@ -2,6 +2,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amana Integrity Gate · Payment Integrity Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -705,8 +706,7 @@
   </div>
   <div class="header-actions">
     <div class="auditor-badge">👤 Madhumanti · ID-1003</div>
-    <a class="btn-download" href="/concept-lab/#integrity-gate">← Portfolio</a>
-    <button class="btn-download" onclick="downloadDashboard()">⬇ Download Report</button>
+    <button class="btn-download" id="downloadBtn" onclick="downloadDashboard()">⬇ Download Report</button>
   </div>
 </header>
 
@@ -2062,13 +2062,32 @@ function hideTooltip() { tooltip.style.display = 'none'; }
 // DOWNLOAD
 // ─────────────────────────────────────────
 function downloadDashboard() {
-  const html = document.documentElement.outerHTML;
-  const blob = new Blob([html], { type: 'text/html' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'amana_integrity_gate_dashboard.html';
-  a.click();
-  URL.revokeObjectURL(a.href);
+  const btn = document.getElementById('downloadBtn');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⋯ Preparing PDF';
+
+  const actions = document.querySelector('.header-actions');
+  actions.style.visibility = 'hidden';
+
+  const opt = {
+    margin:       [8, 8, 8, 8],
+    filename:     'Amana-Integrity-Gate-Report.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, backgroundColor: '#020918', useCORS: true },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
+    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+  };
+
+  html2pdf().set(opt).from(document.body).save().then(() => {
+    actions.style.visibility = 'visible';
+    btn.disabled = false;
+    btn.innerHTML = original;
+  }).catch(() => {
+    actions.style.visibility = 'visible';
+    btn.disabled = false;
+    btn.innerHTML = original;
+  });
 }
 
 // ─────────────────────────────────────────
