@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Verdict Engine — EHR/EMR Platform Comparison</title>
+<style>
+  :root{
+    --bg: #0a0f1a;
+    --panel: #0f1626;
+    --panel-2: #131c30;
+    --line: #1e2a42;
+    --text: #e7ecf5;
+    --text-dim: #94a3b8;
+    --text-faint: #5b6b85;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    --confirmed: #3ddc97;
+    --estimate: #f2a93b;
+    --risk: #ef5b5b;
+    --epic: #6c8cff;
+    --oracle: #ff8a5b;
+    --athena: #4fd1c5;
+    --veradigm: #c77dff;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(108,140,255,0.08), transparent 45%),
+      radial-gradient(ellipse at 90% 10%, rgba(79,209,197,0.06), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:80px;
+  }
+  a{color:var(--athena);}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:52px 0 28px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--confirmed);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .eyebrow .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--confirmed);
+    box-shadow:0 0 8px var(--confirmed);
+    animation:pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+  h1{
+    font-size:clamp(32px,5vw,52px);
+    line-height:1.02;
+    margin:0 0 12px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+  }
+  h1 span{color:var(--text-dim); font-weight:400;}
+  .subhead{
+    color:var(--text-dim);
+    font-size:16px;
+    max-width:640px;
+    margin:0 0 28px;
+  }
+  .ekg{width:100%;height:46px;display:block;opacity:0.9;}
+  .ekg path{
+    fill:none;
+    stroke:var(--confirmed);
+    stroke-width:1.6;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray:1400;
+    stroke-dashoffset:1400;
+    animation:draw 3.4s linear infinite;
+    filter:drop-shadow(0 0 4px rgba(61,220,151,0.5));
+  }
+  @keyframes draw{
+    0%{stroke-dashoffset:1400;}
+    60%{stroke-dashoffset:0;}
+    100%{stroke-dashoffset:-1400;}
+  }
+
+  /* ---------- Layout ---------- */
+  main{padding-top:36px;}
+  section{margin-bottom:44px;}
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:18px; flex-wrap:wrap;}
+  .section-title{font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-faint); font-family:var(--mono); font-weight:600;}
+  .section-sub{font-size:13px; color:var(--text-faint);}
+
+  /* ---------- Weights panel ---------- */
+  .weights-panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px 26px 10px;
+  }
+  .weights-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px 32px;
+  }
+  @media (max-width:720px){ .weights-grid{grid-template-columns:1fr;} }
+  .weight-row{padding-bottom:16px; border-bottom:1px solid var(--line);}
+  .weight-row:nth-last-child(-n+2){border-bottom:none;}
+  @media (max-width:720px){ .weight-row{border-bottom:1px solid var(--line);} .weight-row:last-child{border-bottom:none;} }
+  .weight-label-row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; gap:10px;}
+  .weight-label{font-size:14px; font-weight:600;}
+  .weight-pct{font-family:var(--mono); font-size:14px; color:var(--confirmed); min-width:44px; text-align:right;}
+  .weight-desc{font-size:12.5px; color:var(--text-faint); margin:0 0 10px;}
+  input[type="range"]{
+    -webkit-appearance:none;
+    width:100%;
+    height:4px;
+    border-radius:2px;
+    background:var(--line);
+    outline:none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:16px;height:16px;border-radius:50%;
+    background:var(--confirmed);
+    cursor:pointer;
+    box-shadow:0 0 0 4px rgba(61,220,151,0.15);
+    transition:box-shadow 0.15s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover{box-shadow:0 0 0 6px rgba(61,220,151,0.22);}
+  input[type="range"]::-moz-range-thumb{
+    width:16px;height:16px;border-radius:50%;border:none;
+    background:var(--confirmed); cursor:pointer;
+  }
+  .panel-footer{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 0 16px; margin-top:6px; flex-wrap:wrap; gap:10px;
+  }
+  .total-readout{font-family:var(--mono); font-size:12.5px; color:var(--text-faint);}
+  .total-readout b{color:var(--text);}
+  .reset-btn{
+    background:none; border:1px solid var(--line); color:var(--text-dim);
+    font-family:var(--mono); font-size:12px; padding:8px 14px; border-radius:8px;
+    cursor:pointer; transition:all 0.15s;
+  }
+  .reset-btn:hover{border-color:var(--confirmed); color:var(--confirmed);}
+
+  /* ---------- Leaderboard ---------- */
+  #leaderboard{display:flex; flex-direction:column; gap:12px;}
+  .rank-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px 22px;
+    display:grid;
+    grid-template-columns:44px 1fr 130px;
+    align-items:center;
+    gap:18px;
+    transition:transform 0.5s cubic-bezier(.2,.8,.2,1), border-color 0.3s;
+    position:relative;
+    overflow:hidden;
+  }
+  .rank-card.leader{border-color:var(--confirmed);}
+  .rank-num{font-family:var(--mono); font-size:22px; color:var(--text-faint); font-weight:600;}
+  .rank-card.leader .rank-num{color:var(--confirmed);}
+  .rank-body{min-width:0;}
+  .rank-name-row{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+  .swatch{width:10px;height:10px;border-radius:3px; flex-shrink:0;}
+  .rank-name{font-size:16px; font-weight:700;}
+  .rank-tag{font-size:12.5px; color:var(--text-faint);}
+  .bar-track{height:6px; border-radius:3px; background:var(--line); margin-top:10px; overflow:hidden;}
+  .bar-fill{height:100%; border-radius:3px; transition:width 0.6s cubic-bezier(.2,.8,.2,1);}
+  .rank-score{text-align:right;}
+  .score-num{font-family:var(--mono); font-size:26px; font-weight:700;}
+  .score-suffix{font-family:var(--mono); font-size:13px; color:var(--text-faint);}
+
+  .empty-state{
+    background:var(--panel); border:1px dashed var(--line); border-radius:14px;
+    padding:40px 24px; text-align:center; color:var(--text-dim);
+  }
+  .empty-state b{color:var(--text);}
+
+  /* ---------- Matrix table ---------- */
+  .matrix-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:14px;}
+  table.matrix{border-collapse:collapse; width:100%; min-width:920px; background:var(--panel);}
+  table.matrix th, table.matrix td{
+    padding:14px 16px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top;
+  }
+  table.matrix thead th{
+    background:var(--panel-2);
+    font-family:var(--mono); font-size:11.5px; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--text-faint); font-weight:600; position:sticky; top:0;
+  }
+  table.matrix thead th:first-child{width:220px;}
+  .crit-name{font-weight:600; font-size:13.5px; margin-bottom:2px;}
+  .crit-weight{font-family:var(--mono); font-size:11px; color:var(--text-faint);}
+  .cell-score{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+  .cell-num{font-family:var(--mono); font-weight:700; font-size:15px;}
+  .flag{
+    font-family:var(--mono); font-size:9.5px; padding:2px 6px; border-radius:5px;
+    text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+  }
+  .flag.sourced{background:rgba(61,220,151,0.12); color:var(--confirmed);}
+  .flag.estimate{background:rgba(242,169,59,0.14); color:var(--estimate);}
+  .cell-evidence{font-size:12.5px; color:var(--text-dim); line-height:1.45;}
+  tr:last-child td{border-bottom:none;}
+
+  /* ---------- Collapsibles ---------- */
+  .collapsible{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+  }
+  .collapsible-trigger{
+    width:100%; background:none; border:none; color:var(--text); cursor:pointer;
+    padding:20px 22px; display:flex; align-items:center; justify-content:space-between;
+    font-size:15px; font-weight:600; font-family:var(--sans); text-align:left;
+  }
+  .collapsible-trigger .chev{transition:transform 0.25s; color:var(--text-faint); font-family:var(--mono);}
+  .collapsible.open .collapsible-trigger .chev{transform:rotate(180deg);}
+  .collapsible-body{
+    max-height:0; overflow:hidden; transition:max-height 0.35s ease;
+  }
+  .collapsible-body-inner{padding:0 22px 24px; color:var(--text-dim); font-size:14px;}
+  .collapsible-body-inner h4{color:var(--text); font-size:13px; text-transform:uppercase; letter-spacing:0.06em; margin:18px 0 8px;}
+  .collapsible-body-inner h4:first-child{margin-top:0;}
+  .collapsible-body-inner p{margin:0 0 10px;}
+  .source-list{list-style:none; margin:0; padding:0;}
+  .source-list li{
+    padding:12px 0; border-bottom:1px solid var(--line); font-size:13.5px;
+    display:flex; gap:10px;
+  }
+  .source-list li:last-child{border-bottom:none;}
+  .source-num{font-family:var(--mono); color:var(--text-faint); flex-shrink:0; width:26px;}
+  .source-meta{color:var(--text-faint); font-size:12px; margin-top:2px;}
+  .conflict-item{
+    border-left:2px solid var(--estimate); padding:10px 14px; margin:10px 0; background:rgba(242,169,59,0.05); border-radius:0 8px 8px 0;
+  }
+
+  footer{margin-top:60px; padding-top:24px; border-top:1px solid var(--line); color:var(--text-faint); font-size:12.5px;}
+
+  /* Loading skeleton */
+  .skeleton{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 22px; height:82px; position:relative; overflow:hidden;}
+  .skeleton::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    animation:shimmer 1.4s infinite;
+  }
+  @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow"><span class="dot"></span>PLATFORM COMPARISON · HEALTH-TECH DECISION TOOL</div>
+    <h1>The Verdict Engine <span>for EHR/EMR selection</span></h1>
+    <p class="subhead">A weighted, source-checked comparison of Epic, Oracle Health (Cerner), athenahealth, and Veradigm — built for PMs and consultants who need a defensible recommendation, not a vendor brochure. Adjust the sliders below; the verdict updates live.</p>
+    <svg class="ekg" viewBox="0 0 1400 46" preserveAspectRatio="none">
+      <path d="M0,23 L120,23 L145,23 L160,6 L178,40 L196,10 L214,23 L340,23 L365,23 L380,6 L398,40 L416,10 L434,23 L560,23 L585,23 L600,6 L618,40 L636,10 L654,23 L780,23 L805,23 L820,6 L838,40 L856,10 L874,23 L1000,23 L1025,23 L1040,6 L1058,40 L1076,10 L1094,23 L1220,23 L1245,23 L1260,6 L1278,40 L1296,10 L1314,23 L1400,23"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <!-- WEIGHTS -->
+    <section>
+      <div class="section-head">
+        <div class="section-title">Step 1 — Set your priorities</div>
+        <div class="section-sub">Weights auto-normalize to 100%, whatever raw values you set.</div>
+      </div>
+      <div class="weights-panel">
+        <div class="weights-grid" id="weightsGrid"></div>
+        <div class="panel-footer">
+          <div class="total-readout">Raw total: <b id="totalReadout">100</b> — normalized automatically for scoring</div>
+          <button class="reset-btn" id="resetBtn">↺ Reset to expert-default weights</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section>
+      <div class="section-head">
+        <div class="section-title">Step 2 — The verdict</div>
+        <div class="section-sub" id="leaderSub">Live-ranked, out of 10</div>
+      </div>
+      <div id="leaderboard"></div>
+    </section>
+
+    <!-- MATRIX -->
+    <section>
+      <div class="section-head">
+        <div class="section-title">The full comparison matrix</div>
+        <div class="section-sub">Raw sourced data behind every score</div>
+      </div>
+      <div class="matrix-scroll">
+        <table class="matrix" id="matrixTable"></table>
+      </div>
+    </section>
+
+    <!-- HOW RESEARCHED -->
+    <section>
+      <div class="collapsible" id="researchPanel">
+        <button class="collapsible-trigger" data-target="researchBody">
+          <span>📋 How this was researched</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="collapsible-body" id="researchBody">
+          <div class="collapsible-body-inner">
+            <h4>Methodology</h4>
+            <p>Every numeric score is derived from a named, dated public source — primarily KLAS Research reports, ONC/HealthIT.gov publications, vendor pricing pages, trade press (Fierce Healthcare, Healthcare IT News, TechTarget), and SEC/DOJ filings. Where a metric doesn't map cleanly to a single reported number (see conflicts below), it's built from a documented, transparent conversion — never invented from scratch — and flagged <span class="flag estimate">estimate</span> rather than <span class="flag sourced">sourced</span> in the matrix.</p>
+            <p>Scores are normalized to a 0–10 scale per criterion. The leaderboard score is a weighted average across all seven criteria, using whatever weights you set with the sliders.</p>
+            <h4>Conflicts &amp; judgment calls resolved</h4>
+            <div class="conflict-item"><b>Market share isn't one number.</b> Epic and Oracle Health are measured by KLAS on acute-care hospital contracts; athenahealth and Veradigm compete mainly in the ambulatory/outpatient market, which KLAS and Definitive Healthcare track separately and less granularly. There's no single index that puts all four on one scale, so this criterion is a flagged, analyst-normalized synthesis of both datasets rather than one clean citation.</div>
+            <div class="conflict-item"><b>Oracle Health and Veradigm interoperability scores are estimated.</b> KLAS's "EHR Interoperability Overview 2025" published a 1–9 integration-goals score for Epic (8.0) and athenahealth (7.7), but didn't publish a directly comparable number for Oracle Health or Veradigm in the sources available. Their scores here are estimated from qualitative KLAS/vendor commentary (FHIR R4 support, CommonWell/Carequality participation, QHIN pursuit) and should be treated as directional, not a KLAS-published figure.</div>
+            <div class="conflict-item"><b>Veradigm's ambient-AI score is a low-confidence estimate.</b> Veradigm acquired ScienceIO (an AI/foundation-model company) in March 2024, but public reporting shows little evidence of a deployed, clinician-facing ambient scribe at the scale of Epic's Art, athenahealth's athenaAmbient, or Oracle's Clinical AI Agent. Scored low and flagged accordingly rather than left blank.</div>
+            <div class="conflict-item"><b>KLAS letter grades were converted to a 0–10 scale.</b> The KLAS "Complete Looks" series scores ambulatory vendors with letter grades (e.g. Veradigm's "D," 43% satisfied). Converting a letter grade to a decimal score is a judgment call, made transparently and flagged as such.</div>
+            <h4>Recency &amp; caveats</h4>
+            <p>Research current as of July 2026. EHR pricing is rarely public — vendors negotiate custom contracts — so cost figures reflect ranges reported across multiple independent pricing guides and industry analyses, not official rate cards. This tool is directional, built to structure a defensible first-pass recommendation — validate final numbers against a live RFP before committing budget.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOURCES -->
+    <section>
+      <div class="collapsible" id="sourcesPanel">
+        <button class="collapsible-trigger" data-target="sourcesBody">
+          <span>🔗 Sources (<span id="sourceCount">0</span>)</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="collapsible-body" id="sourcesBody">
+          <div class="collapsible-body-inner">
+            <ul class="source-list" id="sourceList"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Built as a directional decision-support tool. Not a substitute for vendor RFPs, site visits, or reference calls. All data points sourced or explicitly flagged as estimates — see "How this was researched."
+  </footer>
+</div>
+
+<script>
+(function(){
+
+  // ---------------- DATA ----------------
+
+  const vendors = [
+    {id:'epic', name:'Epic Systems', color:'var(--epic)', tag:'Enterprise hospital suite · market leader'},
+    {id:'oracle', name:'Oracle Health (Cerner)', color:'var(--oracle)', tag:'Enterprise suite · post-acquisition transition'},
+    {id:'athena', name:'athenahealth', color:'var(--athena)', tag:'Cloud-native ambulatory leader'},
+    {id:'veradigm', name:'Veradigm (Allscripts)', color:'var(--veradigm)', tag:'Budget ambulatory / outpatient niche'}
+  ];
+
+  const criteria = [
+    {
+      id:'market', label:'Market Share / Install Base', defaultWeight:12,
+      desc:'Footprint and momentum in each vendor\'s core market segment.'
+    },
+    {
+      id:'interop', label:'Interoperability & FHIR API Maturity', defaultWeight:18,
+      desc:'How well the platform supports real-world data exchange, per KLAS.'
+    },
+    {
+      id:'klas', label:'KLAS / User Satisfaction', defaultWeight:20,
+      desc:'Independently surveyed clinician and org satisfaction.'
+    },
+    {
+      id:'cost', label:'Implementation Cost & Timeline', defaultWeight:15,
+      desc:'Typical capital outlay and time-to-go-live for a full deployment.'
+    },
+    {
+      id:'affordability', label:'Small/Mid-Practice Affordability', defaultWeight:15,
+      desc:'Fit and pricing for independent or small-group practices specifically.'
+    },
+    {
+      id:'ai', label:'Ambient / Clinical AI Capabilities', defaultWeight:10,
+      desc:'Maturity and adoption of ambient documentation and clinical AI agents.'
+    },
+    {
+      id:'compliance', label:'Regulatory & Certification Compliance', defaultWeight:10,
+      desc:'ONC certification standing and history of compliance enforcement.'
+    }
+  ];
+
+  // scores: value 0-10, estimate: bool, evidence text, sourceIds
+  const scores = {
+    epic: {
+      market:{value:10.0, estimate:true, evidence:'43.7% of acute-care hospital market and 56.9% of hospital beds (KLAS 2026) plus the largest ambulatory share (~19.5%). Cross-segment figure, analyst-normalized.', sources:[1,2,3,4]},
+      interop:{value:8.9, estimate:false, evidence:'Scored 8.0 out of 9 on KLAS\'s integration-goals index — the highest of any vendor measured in the 2025 Interoperability Overview.', sources:[9,10,11]},
+      klas:{value:9.5, estimate:false, evidence:'#1 Overall Health System Suite for the 15th consecutive year in 2025 Best in KLAS; won 11–14 additional category awards in both 2025 and 2026.', sources:[5,6,7]},
+      cost:{value:2.5, estimate:false, evidence:'Full hospital deployments run $10M–$30M+ (up to $100M+ for large academic centers); 12–24 months for a single hospital, 3–5 years for a phased health-system rollout.', sources:[12,13,14]},
+      affordability:{value:2.0, estimate:false, evidence:'Entry via Community Connect starts at $500K+; explicitly described by independent reviewers as "not a small-practice product."', sources:[12]},
+      ai:{value:9.0, estimate:false, evidence:'"Art for Clinicians" ambient-AI suite launched Aug 2025; 85% of Epic\'s customers were live with generative AI (Art/Emmie/Penny) by Feb 2026.', sources:[15,16]},
+      compliance:{value:9.0, estimate:false, evidence:'Certified under the ONC Health IT Certification Program; no material information-blocking or civil-penalty findings surfaced in current public reporting.', sources:[27,28]}
+    },
+    oracle: {
+      market:{value:5.5, estimate:false, evidence:'21.9% of acute-care hospital market, 20.4% of beds — a third straight year of net losses (down 56 hospitals, 14,676 beds in 2025).', sources:[1,2,3]},
+      interop:{value:7.2, estimate:true, evidence:'No directly comparable KLAS integration-goals score was published for Oracle Health. Estimated from FHIR R4/CommonWell/Carequality participation and an active QHIN/TEFCA application, offset by mid-pack positioning noted in KLAS commentary.', sources:[10,23,26]},
+      klas:{value:3.0, estimate:false, evidence:'Millennium ranked the lowest-scoring acute-care EHR across large, midsize, and small organizations in the 2026 Best in KLAS report; ~30% of surveyed customers say the platform isn\'t part of their long-term plans.', sources:[3,14]},
+      cost:{value:4.5, estimate:false, evidence:'Mid-size hospital (200–400 beds) implementations run $2M–$5M; enterprise deployments $10M–$50M+. Timeline 12–24 months mid-size, 24–36+ months for large systems.', sources:[22,23,24]},
+      affordability:{value:5.0, estimate:false, evidence:'A small ambulatory cloud option exists at roughly $40K–$150K first-year cost, but small practices aren\'t Oracle Health\'s core market.', sources:[25]},
+      ai:{value:6.0, estimate:false, evidence:'"Clinical AI Agent" and a voice-first next-gen platform announced Oct 2024, but independent analysis notes repeated rollout delays (e.g., Sheffield Teaching Hospitals go-live pushed back).', sources:[26]},
+      compliance:{value:7.5, estimate:false, evidence:'ONC certified and pursuing QHIN status under TEFCA; the $16B VA EHR modernization contract (originally Cerner\'s) has faced deployment delays, cost overruns, and congressional scrutiny.', sources:[23,27]}
+    },
+    athena: {
+      market:{value:7.0, estimate:true, evidence:'Described as one of the two largest cloud ambulatory EHR players alongside eClinicalWorks; exact unified market-share % not published in a single cross-segment source.', sources:[4,7]},
+      interop:{value:8.6, estimate:false, evidence:'Scored 7.7 out of 9 on KLAS\'s integration-goals index — second only to Epic among vendors measured.', sources:[9,10]},
+      klas:{value:9.0, estimate:false, evidence:'#1 Overall Independent Physician Practice Suite for the 2nd consecutive year (2025 & 2026); also Best in KLAS for Ambulatory EHR and Practice Management (11–75 physicians).', sources:[5,6,7]},
+      cost:{value:8.0, estimate:false, evidence:'Cloud-native, collections-based pricing (no major upfront capital outlay); onboarding measured in weeks to months rather than years.', sources:[17,18,19]},
+      affordability:{value:6.5, estimate:false, evidence:'$140/provider/month base plus 4–7% of collections — roughly $2,400–$3,900/month for a 3-provider practice; standard 3-year contract lock-in noted as a downside.', sources:[17,18]},
+      ai:{value:8.0, estimate:false, evidence:'"athenaAmbient" native ambient documentation launched 2026 at no extra cost; also partnered with Microsoft to embed Dragon Copilot in athenaOne (Dec 2025).', sources:[19,10]},
+      compliance:{value:8.0, estimate:false, evidence:'ONC certified; no major enforcement actions surfaced in current public reporting.', sources:[27,28]}
+    },
+    veradigm: {
+      market:{value:3.0, estimate:false, evidence:'Described by independent EHR analysts as a smaller, niche outpatient player with "less significant" share than Epic, Oracle Health, or athenahealth.', sources:[4]},
+      interop:{value:6.1, estimate:true, evidence:'No directly comparable KLAS integration-goals figure was published. Estimated from vendor-claimed "open architecture" positioning, offset by its smaller ecosystem scale relative to Epic and athenahealth.', sources:[4,10]},
+      klas:{value:3.5, estimate:false, evidence:'Earned a "D" overall performance grade in KLAS\'s ambulatory Complete Looks series, with only 43% of users satisfied or highly satisfied.', sources:[8]},
+      cost:{value:8.5, estimate:false, evidence:'Lowest entry cost of the four: Practice Fusion EHR from $199/month, ePrescribe module from $49/prescriber/month.', sources:[20,21]},
+      affordability:{value:8.5, estimate:false, evidence:'Flat, low-cost pricing tiers (Practice Fusion, ePrescribe) make it the cheapest entry point for a solo or small practice among the four vendors compared.', sources:[20,21]},
+      ai:{value:4.0, estimate:true, evidence:'Acquired ScienceIO, an AI/foundation-model company, in March 2024 to strengthen its data platform, but public reporting shows limited evidence of a deployed clinician-facing ambient scribe at comparable scale.', sources:[4,29]},
+      compliance:{value:3.0, estimate:false, evidence:'Its Practice Fusion unit paid a $145M settlement in 2019 for falsified EHR certification and Anti-Kickback Statute violations tied to opioid prescribing; a December 2024 data breach affecting ~2.5M patients led to a $10.5M class-action settlement (Jan 2026).', sources:[30,31,32]}
+    }
+  };
+
+  const sources = [
+    {id:1, title:'US Acute Care EHR Market Share 2026 (KLAS data)', pub:'healthsystemcio.com', date:'May 2026', url:'https://healthsystemcio.com/2026/05/14/acute-care-ehr-market-share-2026/'},
+    {id:2, title:'Epic continues to grow EHR market share, widens lead over Oracle Health', pub:'Fierce Healthcare', date:'May 2026', url:'https://www.fiercehealthcare.com/health-tech/epic-continues-grow-ehr-market-share-it-makes-gains-small-health-systems'},
+    {id:3, title:'KLAS 2026 EHR Market Share Report: Epic gains as Oracle Health faces third year of losses', pub:'HIT Consultant', date:'May 2026', url:'https://hitconsultant.net/2026/05/14/klas-2026-ehr-market-share-report/'},
+    {id:4, title:'Who are the largest EHR vendors?', pub:'EHR in Practice', date:'June 2026', url:'https://www.ehrinpractice.com/largest-ehr-vendors.html'},
+    {id:5, title:'Epic, Athenahealth win 2025 overall Best in KLAS awards', pub:'TechTarget', date:'2025', url:'https://www.techtarget.com/searchhealthit/news/366618816/Epic-Athenahealth-win-overall-Best-in-KLAS-awards'},
+    {id:6, title:'Best in KLAS 2025 sees industry progress and vendor momentum', pub:'Healthcare IT News', date:'2025', url:'https://www.healthcareitnews.com/news/best-klas-2025-sees-industry-progress-and-vendor-momentum'},
+    {id:7, title:'Best in KLAS 2026 sees positive disruption, "tangible" tech improvements', pub:'Healthcare IT News', date:'2026', url:'https://www.healthcareitnews.com/news/best-klas-2026-sees-positive-disruption-tangible-tech-improvements'},
+    {id:8, title:'How 6 ambulatory EHR providers stack up (KLAS Complete Looks)', pub:'TechTarget', date:'2026', url:'https://www.techtarget.com/searchhealthit/news/366626047/How-6-ambulatory-EHR-providers-stack-up'},
+    {id:9, title:'KLAS: Health data sharing improves, yet interoperability still lacking', pub:'TechTarget', date:'2026', url:'https://www.techtarget.com/searchhealthit/news/366636662/KLAS-Health-data-sharing-improves-yet-interoperability-still-lacking'},
+    {id:10, title:'EHR Interoperability Progress Masks Persistent Gaps, KLAS', pub:'healthsystemcio.com', date:'Dec 2025', url:'https://healthsystemcio.com/2025/12/02/ehr-interoperability-progress-masks-persistent-gaps-klas-finds/'},
+    {id:11, title:'EHR Interoperability Overview 2025 (report listing)', pub:'KLAS Research', date:'Dec 2025', url:'https://klasresearch.com/report/ehr-interoperability-overview-2025-a-look-at-how-vendors-are-supporting-patient-record-third-party-and-payer-provider-interoperability/3852'},
+    {id:12, title:'Epic Systems EHR Review 2026 — pricing, features, pros & cons', pub:'EHR Source', date:'Feb 2026', url:'https://www.ehrsource.com/vendors/epic/'},
+    {id:13, title:'How Much Does Epic Cost for a Hospital in 2025?', pub:'HyScaler', date:'Nov 2025', url:'https://hyscaler.com/insights/epic-cost-for-a-hospital/'},
+    {id:14, title:'Epic EMR Pricing Guide 2026', pub:'Software Finder', date:'May 2026', url:'https://softwarefinder.com/emr-software/epic/pricing'},
+    {id:15, title:'Abridge Business Breakdown & Founding Story (Epic "Art for Clinicians" context)', pub:'Contrary Research', date:'2025', url:'https://research.contrary.com/company/abridge'},
+    {id:16, title:'Epic\'s AI scribe goes live as EHR giant touts strong adoption of built-in AI features', pub:'Fierce Healthcare', date:'Feb 2026', url:'https://www.fiercehealthcare.com/ai-and-machine-learning/epic-rolls-out-ai-charting-and-more-built-automation-clinicians-and'},
+    {id:17, title:'Athenahealth Pricing 2026: $50–$500/Month Cost', pub:'ITQlick', date:'2026', url:'https://www.itqlick.com/athenahealth/pricing'},
+    {id:18, title:'EHR Buying Guide for Small Practices in 2026', pub:'Swipe Savvy', date:'Apr 2026', url:'https://swipesavvy.com/resources/blog/healthcare-clinic-ehr-buying-guide/'},
+    {id:19, title:'athenahealth Pricing 2026: The True TCO & Hidden Costs', pub:'PricingNow', date:'Dec 2025', url:'https://pricingnow.com/question/emr-pricing/'},
+    {id:20, title:'Veradigm: Pricing, Free Demo & Features', pub:'Software Finder', date:'June 2026', url:'https://softwarefinder.com/emr-software/veradigm-ehr'},
+    {id:21, title:'Veradigm Practice Management Pricing, Plans', pub:'ZoftwareHub', date:'2026', url:'https://zoftwarehub.com/products/veradigm-practice-management/pricing'},
+    {id:22, title:'How Much Does Cerner (Oracle Health) Cost?', pub:'Arkenea', date:'Aug 2025', url:'https://arkenea.com/blog/cerner-cost/'},
+    {id:23, title:'Oracle Health (Cerner) EHR Review 2026 — pricing, features, pros & cons', pub:'EHR Source', date:'Feb 2026', url:'https://www.ehrsource.com/vendors/oracle-health/'},
+    {id:24, title:'Cerner EMR: Features, Free Demo & Pricing', pub:'Software Finder', date:'June 2026', url:'https://softwarefinder.com/emr-software/cerner'},
+    {id:25, title:'Cerner Oracle Health EHR Cost — worth the switch in 2026?', pub:'Industry benchmarking analysis', date:'May 2026', url:'https://shop.bottegadelsarto.com/opinion/cerner-oracle-health-ehr-cost-worth-the-switch-in-2026-692081'},
+    {id:26, title:'Oracle Health aims for AI integration but setbacks in EHR rollout remain', pub:'Signify Research', date:'Jan 2025', url:'https://www.signifyresearch.net/insights/oracle-health-aims-for-ai-integration-but-setbacks-in-ehr-rollout-remain/'},
+    {id:27, title:'Passing the Baton (information blocking enforcement update)', pub:'HealthIT.gov / ONC Blog', date:'Jan 2026', url:'https://healthit.gov/blog/insights-updates/passing-the-baton/'},
+    {id:28, title:'CMS and ONC Healthcare Regulations 2026: CTO Guide', pub:'Nirmitee.io', date:'Apr 2026', url:'https://nirmitee.io/blog/cms-onc-healthcare-regulations-2026-interoperability-compliance/'},
+    {id:29, title:'Electronic Medical Record Market Forecasts 2025–2030 (Veradigm/ScienceIO acquisition)', pub:'GlobeNewswire / Research and Markets', date:'Oct 2025', url:'https://finance.yahoo.com/news/electronic-medical-record-market-forecasts-152900347.html'},
+    {id:30, title:'Allscripts reaches $145M settlement with DOJ over subsidiary business practices', pub:'Healthcare Dive', date:'Aug 2019', url:'https://www.healthcaredive.com/news/allscripts-reaches-145m-settlement-with-doj-over-subsidiary-business-pract/560536/'},
+    {id:31, title:'Practice Fusion to pay $145M settlement for kickbacks aimed at increasing opioid prescriptions', pub:'Fierce Healthcare', date:'2020', url:'https://www.fiercehealthcare.com/tech/allscripts-practice-fusion-to-pay-145m-settlement-doj-opioid-case'},
+    {id:32, title:'Veradigm to pay $10.5M to settle class action data breach lawsuit', pub:'HIPAA Journal', date:'Jan 2026', url:'https://www.hipaajournal.com/veradigm-class-action-data-breach-lawsuit/'}
+  ];
+
+  // ---------------- STATE ----------------
+  let weights = {};
+  criteria.forEach(c => weights[c.id] = c.defaultWeight);
+
+  // ---------------- RENDER: WEIGHT SLIDERS ----------------
+  const weightsGrid = document.getElementById('weightsGrid');
+  criteria.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'weight-row';
+    row.innerHTML = `
+      <div class="weight-label-row">
+        <span class="weight-label">${c.label}</span>
+        <span class="weight-pct" id="pct-${c.id}">${c.defaultWeight}%</span>
+      </div>
+      <p class="weight-desc">${c.desc}</p>
+      <input type="range" min="0" max="100" value="${c.defaultWeight}" id="slider-${c.id}" data-crit="${c.id}">
+    `;
+    weightsGrid.appendChild(row);
+  });
+
+  weightsGrid.addEventListener('input', (e) => {
+    if(e.target.matches('input[type="range"]')){
+      const crit = e.target.dataset.crit;
+      weights[crit] = parseInt(e.target.value, 10);
+      renderAll();
+    }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    criteria.forEach(c => {
+      weights[c.id] = c.defaultWeight;
+      document.getElementById(`slider-${c.id}`).value = c.defaultWeight;
+    });
+    renderAll();
+  });
+
+  // ---------------- COMPUTE ----------------
+  function computeWeighted(){
+    const total = criteria.reduce((s,c) => s + weights[c.id], 0);
+    const results = vendors.map(v => {
+      let weighted = 0;
+      if(total > 0){
+        criteria.forEach(c => {
+          const s = scores[v.id][c.id];
+          weighted += (weights[c.id] / total) * s.value;
+        });
+      }
+      return {vendor:v, weighted: total > 0 ? weighted : null};
+    });
+    return {results, total};
+  }
+
+  // ---------------- RENDER: LEADERBOARD ----------------
+  const leaderboardEl = document.getElementById('leaderboard');
+  const leaderSub = document.getElementById('leaderSub');
+
+  function renderLeaderboard(){
+    const {results, total} = computeWeighted();
+    document.getElementById('totalReadout').textContent = total;
+
+    if(total === 0){
+      leaderboardEl.innerHTML = `<div class="empty-state"><b>No priorities set.</b><br>Move at least one slider above zero to generate a verdict.</div>`;
+      leaderSub.textContent = 'Waiting for input';
+      return;
+    }
+
+    leaderSub.textContent = `Live-ranked, out of 10 · weights sum to ${total}%, normalized automatically`;
+
+    const sorted = results.slice().sort((a,b) => b.weighted - a.weighted);
+    const maxScore = sorted[0].weighted;
+
+    // capture old positions for FLIP animation
+    const oldRects = {};
+    leaderboardEl.querySelectorAll('.rank-card').forEach(card => {
+      oldRects[card.dataset.id] = card.getBoundingClientRect();
+    });
+
+    leaderboardEl.innerHTML = '';
+    sorted.forEach((r, i) => {
+      const card = document.createElement('div');
+      card.className = 'rank-card' + (i === 0 ? ' leader' : '');
+      card.dataset.id = r.vendor.id;
+      const pctOfMax = maxScore > 0 ? (r.weighted / maxScore) * 100 : 0;
+      card.innerHTML = `
+        <div class="rank-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="rank-body">
+          <div class="rank-name-row">
+            <span class="swatch" style="background:${r.vendor.color}"></span>
+            <span class="rank-name">${r.vendor.name}</span>
+          </div>
+          <div class="rank-tag">${r.vendor.tag}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pctOfMax}%; background:${r.vendor.color};"></div></div>
+        </div>
+        <div class="rank-score">
+          <div class="score-num" style="color:${r.vendor.color}">${r.weighted.toFixed(2)}</div>
+          <div class="score-suffix">/ 10</div>
+        </div>
+      `;
+      leaderboardEl.appendChild(card);
+    });
+
+    // FLIP animate
+    leaderboardEl.querySelectorAll('.rank-card').forEach(card => {
+      const id = card.dataset.id;
+      const oldRect = oldRects[id];
+      if(oldRect){
+        const newRect = card.getBoundingClientRect();
+        const dy = oldRect.top - newRect.top;
+        if(dy){
+          card.style.transform = `translateY(${dy}px)`;
+          requestAnimationFrame(() => {
+            card.style.transform = '';
+          });
+        }
+      }
+    });
+  }
+
+  // ---------------- RENDER: MATRIX ----------------
+  function renderMatrix(){
+    const table = document.getElementById('matrixTable');
+    let thead = `<thead><tr><th>Criterion</th>`;
+    vendors.forEach(v => thead += `<th><span class="swatch" style="background:${v.color}; display:inline-block; margin-right:6px;"></span>${v.name}</th>`);
+    thead += `</tr></thead>`;
+
+    let tbody = `<tbody>`;
+    criteria.forEach(c => {
+      tbody += `<tr><td><div class="crit-name">${c.label}</div><div class="crit-weight">weight: ${weights[c.id]}%</div></td>`;
+      vendors.forEach(v => {
+        const s = scores[v.id][c.id];
+        tbody += `<td>
+          <div class="cell-score">
+            <span class="cell-num">${s.value.toFixed(1)}</span>
+            <span class="flag ${s.estimate ? 'estimate' : 'sourced'}">${s.estimate ? 'estimate' : 'sourced'}</span>
+          </div>
+          <div class="cell-evidence">${s.evidence} <span style="color:var(--text-faint)">[${s.sources.join(', ')}]</span></div>
+        </td>`;
+      });
+      tbody += `</tr>`;
+    });
+    tbody += `</tbody>`;
+    table.innerHTML = thead + tbody;
+  }
+
+  // ---------------- RENDER: SOURCES ----------------
+  function renderSources(){
+    const list = document.getElementById('sourceList');
+    document.getElementById('sourceCount').textContent = sources.length;
+    list.innerHTML = sources.map(s => `
+      <li>
+        <span class="source-num">[${s.id}]</span>
+        <span>
+          <a href="${s.url}" target="_blank" rel="noopener">${s.title}</a>
+          <div class="source-meta">${s.pub} · ${s.date}</div>
+        </span>
+      </li>
+    `).join('');
+  }
+
+  // ---------------- COLLAPSIBLES ----------------
+  document.querySelectorAll('.collapsible-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const parent = trigger.closest('.collapsible');
+      const body = document.getElementById(trigger.dataset.target);
+      const isOpen = parent.classList.toggle('open');
+      body.style.maxHeight = isOpen ? body.scrollHeight + 'px' : '0';
+    });
+  });
+
+  // ---------------- INIT ----------------
+  function renderAll(){
+    renderLeaderboard();
+  }
+
+  // simulate a brief loading state for the leaderboard on first paint
+  leaderboardEl.innerHTML = `<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>`;
+  renderMatrix();
+  renderSources();
+  setTimeout(() => { renderAll(); }, 260);
+
+})();
+</script>
+
+</body>
+</html>
