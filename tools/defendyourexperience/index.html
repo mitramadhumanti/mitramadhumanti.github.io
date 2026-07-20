@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defend Your Experience — Case File</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12141c;
+    --ink-panel:#191c28;
+    --ink-panel-raised:#1f2333;
+    --rule:#2b3044;
+    --rule-soft:#232739;
+    --paper:#efe9dc;
+    --paper-dim:#e4ddc9;
+    --paper-line:#d7cdae;
+    --paper-text:#221f19;
+    --paper-text-dim:#6b6252;
+    --ink-text:#eeeadf;
+    --ink-text-dim:#9a9db0;
+    --ink-text-faint:#6c6f83;
+    --brass:#c9a227;
+    --brass-bright:#e0b937;
+    --brass-dim:#8f7620;
+    --verified:#4c8a76;
+    --verified-dim:#345d50;
+    --flag:#b5482a;
+    --flag-dim:#7d3320;
+    --shadow-deep: 0 24px 60px -20px rgba(0,0,0,0.6);
+    --radius: 3px;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(201,162,39,0.07), transparent 60%),
+      radial-gradient(ellipse 700px 600px at 100% 10%, rgba(76,138,118,0.06), transparent 60%),
+      var(--ink);
+    color:var(--ink-text);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::selection{ background: var(--brass); color:#1a1a12; }
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:var(--rule); border-radius:10px; }
+
+  h1,h2,h3,.serif{ font-family:'Fraunces', serif; letter-spacing:-0.01em; }
+  .mono{ font-family:'IBM Plex Mono', monospace; letter-spacing:0.02em; }
+  a{ color:inherit; }
+
+  button{ font-family:inherit; cursor:pointer; }
+  button:focus-visible, .mcq-card:focus-visible, textarea:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid var(--brass-bright); outline-offset:2px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  .app{ min-height:100vh; display:flex; flex-direction:column; }
+  .screen{ display:none; flex:1; width:100%; }
+  .screen.active{ display:flex; flex-direction:column; }
+
+  /* ---------- shared top bits ---------- */
+  .brandbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 28px; border-bottom:1px solid var(--rule-soft);
+    flex-wrap:wrap; gap:10px;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand .mark{
+    width:30px; height:30px; border:1.5px solid var(--brass);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--brass); font-family:'Fraunces',serif; font-weight:600; font-size:15px;
+    transform:rotate(-6deg); flex-shrink:0;
+  }
+  .brand .name{ font-family:'Fraunces',serif; font-size:17px; font-weight:600; }
+  .brand .name em{ font-style:italic; color:var(--brass); font-weight:500; }
+
+  /* ---------- landing ---------- */
+  #screen-landing .wrap{
+    max-width:880px; margin:0 auto; padding:70px 24px 60px; width:100%;
+  }
+  .kicker{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:0.16em;
+    text-transform:uppercase; color:var(--brass); display:flex; align-items:center; gap:10px; margin-bottom:22px;
+  }
+  .kicker::before{ content:''; width:26px; height:1px; background:var(--brass-dim); }
+  .hero-title{ font-size:clamp(34px,5.4vw,58px); line-height:1.04; font-weight:600; margin:0 0 22px; max-width:15ch; }
+  .hero-title .flag-word{ font-style:italic; color:var(--brass-bright); }
+  .hero-sub{ font-size:17px; line-height:1.65; color:var(--ink-text-dim); max-width:56ch; margin:0 0 36px; }
+  .cta-row{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:56px; }
+  .btn{
+    border:none; border-radius:var(--radius); padding:14px 26px; font-size:14.5px; font-weight:600;
+    display:inline-flex; align-items:center; gap:9px; transition:transform .15s ease, background .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary{ background:var(--brass); color:#1c1706; }
+  .btn-primary:hover{ background:var(--brass-bright); transform:translateY(-1px); box-shadow:0 10px 24px -8px rgba(201,162,39,0.45); }
+  .btn-ghost{ background:transparent; color:var(--ink-text); border:1px solid var(--rule); }
+  .btn-ghost:hover{ border-color:var(--brass-dim); color:var(--brass-bright); }
+  .btn-small{ padding:9px 16px; font-size:13px; }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; transform:none !important; box-shadow:none !important; }
+
+  .how-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--rule-soft); border:1px solid var(--rule-soft); margin-bottom:50px; }
+  .how-cell{ background:var(--ink-panel); padding:24px 22px; }
+  .how-cell .num{ font-family:'IBM Plex Mono',monospace; color:var(--brass-dim); font-size:12px; margin-bottom:10px; display:block; }
+  .how-cell h3{ font-size:16.5px; margin:0 0 8px; font-weight:600; }
+  .how-cell p{ font-size:13.5px; color:var(--ink-text-dim); line-height:1.55; margin:0; }
+  @media (max-width:720px){ .how-grid{ grid-template-columns:1fr; } }
+
+  .prior-cases h2{ font-size:15px; margin:0 0 4px; color:var(--ink-text-dim); font-weight:600; text-transform:uppercase; letter-spacing:0.08em; font-family:'IBM Plex Mono',monospace; }
+  .case-row{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:16px 18px; border:1px solid var(--rule-soft); border-radius:var(--radius); margin-top:10px;
+    background:var(--ink-panel); transition:border-color .15s ease;
+  }
+  .case-row:hover{ border-color:var(--brass-dim); }
+  .case-row .meta{ display:flex; flex-direction:column; gap:3px; }
+  .case-row .meta .t{ font-weight:600; font-size:14.5px; }
+  .case-row .meta .d{ font-size:12px; color:var(--ink-text-faint); font-family:'IBM Plex Mono',monospace; }
+  .case-row .actions{ display:flex; gap:8px; align-items:center; }
+  .gauge-mini{ position:relative; width:38px; height:38px; border-radius:50%; flex-shrink:0; }
+  .empty-note{ font-size:13px; color:var(--ink-text-faint); padding:16px 2px; }
+
+  /* ---------- MCQ setup ---------- */
+  #screen-setup .wrap{ max-width:640px; margin:auto; padding:40px 24px; width:100%; }
+  .setup-progress{ display:flex; gap:6px; margin-bottom:34px; }
+  .setup-progress .dot{ height:3px; flex:1; background:var(--rule); border-radius:2px; overflow:hidden; }
+  .setup-progress .dot i{ display:block; height:100%; width:0%; background:var(--brass); transition:width .3s ease; }
+  .setup-progress .dot.done i, .setup-progress .dot.active i{ width:100%; }
+  .q-eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--brass); text-transform:uppercase; letter-spacing:0.14em; margin-bottom:14px; }
+  .q-title{ font-size:clamp(22px,3.4vw,30px); font-weight:600; margin:0 0 30px; line-height:1.28; }
+  .mcq-list{ display:flex; flex-direction:column; gap:10px; margin-bottom:26px; }
+  .mcq-card{
+    text-align:left; background:var(--ink-panel); border:1px solid var(--rule); color:var(--ink-text);
+    padding:16px 18px; border-radius:var(--radius); font-size:14.5px; display:flex; align-items:center; gap:14px;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .mcq-card:hover{ border-color:var(--brass-dim); background:var(--ink-panel-raised); }
+  .mcq-card:active{ transform:scale(0.995); }
+  .mcq-card .letter{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--brass-dim); border:1px solid var(--rule);
+    width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;
+  }
+  .setup-back{ background:none; border:none; color:var(--ink-text-faint); font-size:13px; display:flex; gap:6px; align-items:center; padding:6px 0; }
+  .setup-back:hover{ color:var(--ink-text-dim); }
+
+  /* ---------- upload ---------- */
+  #screen-upload .wrap{ max-width:680px; margin:auto; padding:40px 24px; width:100%; }
+  .dropzone{
+    border:1.5px dashed var(--rule); border-radius:var(--radius); padding:44px 26px; text-align:center;
+    background:var(--ink-panel); transition:border-color .2s ease, background .2s ease; margin-bottom:20px;
+  }
+  .dropzone.dragover{ border-color:var(--brass); background:var(--ink-panel-raised); }
+  .dropzone .dz-icon{ font-size:26px; margin-bottom:10px; color:var(--brass-dim); font-family:'Fraunces',serif; }
+  .dropzone h3{ margin:0 0 6px; font-size:16px; }
+  .dropzone p{ margin:0 0 16px; font-size:13px; color:var(--ink-text-faint); }
+  .file-label{ display:inline-block; }
+  .divider-or{ display:flex; align-items:center; gap:12px; margin:20px 0; color:var(--ink-text-faint); font-size:11.5px; font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:0.1em; }
+  .divider-or::before,.divider-or::after{ content:''; flex:1; height:1px; background:var(--rule-soft); }
+  textarea#pasteArea{
+    width:100%; min-height:180px; background:var(--ink-panel); border:1px solid var(--rule); border-radius:var(--radius);
+    color:var(--ink-text); padding:16px; font-size:14px; line-height:1.6; font-family:'Inter',sans-serif; resize:vertical;
+  }
+  textarea#pasteArea::placeholder{ color:var(--ink-text-faint); }
+  .file-chip{ display:inline-flex; align-items:center; gap:10px; background:var(--ink-panel-raised); border:1px solid var(--brass-dim); padding:8px 14px; border-radius:var(--radius); font-size:13px; margin-top:10px; }
+  .file-chip button{ background:none; border:none; color:var(--flag); font-size:15px; }
+  .upload-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:26px; gap:12px; flex-wrap:wrap; }
+  .char-count{ font-size:12px; color:var(--ink-text-faint); font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- extracting ---------- */
+  #screen-extracting{ align-items:center; justify-content:center; text-align:center; }
+  .stamp-loader{ width:74px; height:74px; border:2px solid var(--brass-dim); border-radius:50%; position:relative; margin:0 auto 26px; }
+  .stamp-loader::before{
+    content:''; position:absolute; inset:-2px; border-radius:50%; border:2px solid transparent; border-top-color:var(--brass);
+    animation:spin 1.1s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  #extractingLabel{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-text-dim); letter-spacing:0.04em; }
+  #screen-extracting h2{ font-size:22px; margin:0 0 6px; }
+
+  /* ---------- interview shell ---------- */
+  #screen-interview{ flex-direction:column; }
+  .case-header{
+    display:flex; align-items:center; justify-content:space-between; padding:14px 26px; border-bottom:1px solid var(--rule-soft);
+    gap:18px; flex-wrap:wrap;
+  }
+  .case-header .title-block{ display:flex; align-items:center; gap:14px; }
+  .case-header .case-name{ font-family:'Fraunces',serif; font-size:17px; font-weight:600; }
+  .case-header .case-sub{ font-size:11.5px; color:var(--ink-text-faint); font-family:'IBM Plex Mono',monospace; }
+  .header-actions{ display:flex; gap:10px; align-items:center; }
+
+  .gauge{ position:relative; width:52px; height:52px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .gauge span{ font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; z-index:1; }
+  .gauge::after{ content:''; position:absolute; inset:6px; border-radius:50%; background:var(--ink); }
+
+  .interview-body{ flex:1; display:flex; min-height:0; }
+  .exhibit-rail{
+    width:250px; flex-shrink:0; border-right:1px solid var(--rule-soft); overflow-y:auto; padding:18px 0;
+  }
+  .rail-label{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.12em; color:var(--ink-text-faint); padding:0 20px 12px; }
+  .exhibit-item{
+    display:flex; align-items:center; gap:11px; padding:12px 20px; cursor:default; border-left:2px solid transparent; opacity:0.55;
+    transition:opacity .2s ease, background .2s ease;
+  }
+  .exhibit-item.active{ opacity:1; background:var(--ink-panel); border-left-color:var(--brass); }
+  .exhibit-item.concluded{ opacity:0.85; }
+  .exhibit-item .dot{ width:9px; height:9px; border-radius:50%; background:var(--ink-text-faint); flex-shrink:0; }
+  .exhibit-item.status-active .dot{ background:var(--brass); box-shadow:0 0 0 3px rgba(201,162,39,0.18); animation:pulse 1.6s ease-in-out infinite; }
+  .exhibit-item.status-weak .dot{ background:var(--flag); }
+  .exhibit-item.status-developing .dot{ background:var(--brass); }
+  .exhibit-item.status-strong .dot{ background:var(--verified); }
+  @keyframes pulse{ 0%,100%{ box-shadow:0 0 0 3px rgba(201,162,39,0.18);} 50%{ box-shadow:0 0 0 6px rgba(201,162,39,0.05);} }
+  .exhibit-item .label{ font-size:12.5px; line-height:1.4; }
+  .exhibit-item .label .ex-num{ display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--brass-dim); margin-bottom:2px; }
+
+  .stage{ flex:1; overflow-y:auto; padding:30px 40px 50px; display:flex; justify-content:center; }
+  .stage-inner{ max-width:640px; width:100%; }
+
+  .exhibit-card{
+    background:var(--paper); color:var(--paper-text); border-radius:2px; padding:26px 28px; margin-bottom:26px;
+    box-shadow:var(--shadow-deep); position:relative; border:1px solid var(--paper-line);
+  }
+  .exhibit-card .ex-tag{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--brass-dim); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; display:block; }
+  .exhibit-card h2{ font-size:20px; margin:0 0 12px; font-weight:600; color:var(--paper-text); }
+  .exhibit-card blockquote{ margin:0; font-size:14.5px; font-style:italic; color:var(--paper-text-dim); border-left:2px solid var(--brass-dim); padding-left:14px; line-height:1.6; }
+  .exhibit-card .category-pill{ display:inline-block; margin-top:14px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; background:rgba(0,0,0,0.06); padding:4px 10px; border-radius:20px; color:var(--paper-text-dim); }
+
+  .stamp-overlay{
+    position:absolute; top:14px; right:18px; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:13px;
+    padding:7px 14px; border:2.5px solid; border-radius:3px; text-transform:uppercase; letter-spacing:0.08em;
+    transform:rotate(-8deg) scale(1.4); opacity:0; pointer-events:none;
+  }
+  .stamp-overlay.show{ animation:stampdown .45s cubic-bezier(.2,1.4,.4,1) forwards; }
+  @keyframes stampdown{ 0%{ opacity:0; transform:rotate(-8deg) scale(2.2);} 60%{ opacity:1; transform:rotate(-8deg) scale(0.92);} 100%{ opacity:0.95; transform:rotate(-8deg) scale(1);} }
+  .stamp-overlay.weak{ color:var(--flag); border-color:var(--flag); }
+  .stamp-overlay.developing{ color:var(--brass-dim); border-color:var(--brass-dim); }
+  .stamp-overlay.strong{ color:var(--verified-dim); border-color:var(--verified-dim); }
+
+  .transcript{ display:flex; flex-direction:column; gap:16px; margin-bottom:20px; }
+  .bubble{ max-width:88%; padding:13px 16px; border-radius:3px; font-size:14.5px; line-height:1.58; }
+  .bubble.q{ align-self:flex-start; background:var(--ink-panel); border:1px solid var(--rule-soft); }
+  .bubble.q::before{ content:'Interviewer'; display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--brass); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+  .bubble.a{ align-self:flex-end; background:var(--ink-panel-raised); border:1px solid var(--rule); }
+  .bubble.a::before{ content:'You'; display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-text-faint); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+  .bubble.feedback{ align-self:flex-start; background:transparent; border:1px dashed var(--rule); color:var(--ink-text-dim); font-size:13.5px; font-style:italic; }
+  .bubble.feedback::before{ content:'Coaching note'; display:block; font-family:'IBM Plex Mono',monospace; font-style:normal; font-size:10px; color:var(--verified); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+
+  .answer-box{ position:relative; }
+  textarea#answerInput{
+    width:100%; min-height:110px; background:var(--ink-panel); border:1px solid var(--rule); border-radius:var(--radius);
+    color:var(--ink-text); padding:15px 16px; font-size:14.5px; line-height:1.6; font-family:'Inter',sans-serif; resize:vertical;
+  }
+  textarea#answerInput::placeholder{ color:var(--ink-text-faint); }
+  .answer-row{ display:flex; justify-content:space-between; align-items:center; margin-top:12px; gap:10px; flex-wrap:wrap; }
+  .thinking-line{ display:flex; align-items:center; gap:9px; font-size:13px; color:var(--ink-text-faint); font-family:'IBM Plex Mono',monospace; padding:8px 0; }
+  .thinking-line .dotflash{ display:inline-flex; gap:3px; }
+  .thinking-line .dotflash i{ width:5px; height:5px; border-radius:50%; background:var(--brass-dim); animation:flash 1s ease-in-out infinite; }
+  .thinking-line .dotflash i:nth-child(2){ animation-delay:.15s; } .thinking-line .dotflash i:nth-child(3){ animation-delay:.3s; }
+  @keyframes flash{ 0%,100%{opacity:.25;} 50%{opacity:1;} }
+
+  .next-exhibit-row{ display:flex; justify-content:flex-end; margin-top:6px; }
+  .banner{
+    border:1px solid var(--flag-dim); background:rgba(181,72,42,0.08); color:#e2a894; padding:12px 16px; border-radius:var(--radius);
+    font-size:13.5px; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px;
+  }
+
+  /* ---------- report ---------- */
+  #screen-report .wrap{ max-width:880px; margin:0 auto; padding:50px 24px 70px; width:100%; }
+  .report-hero{ display:flex; gap:40px; align-items:center; margin-bottom:46px; flex-wrap:wrap; }
+  .gauge-big{ width:150px; height:150px; border-radius:50%; position:relative; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .gauge-big::after{ content:''; position:absolute; inset:14px; border-radius:50%; background:var(--ink); }
+  .gauge-big .gb-num{ z-index:1; font-family:'Fraunces',serif; font-size:38px; font-weight:600; }
+  .gauge-big .gb-label{ z-index:1; position:absolute; bottom:38px; font-family:'IBM Plex Mono',monospace; font-size:9.5px; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-text-faint); }
+  .report-hero h1{ font-size:clamp(24px,4vw,32px); margin:0 0 10px; }
+  .report-hero p{ color:var(--ink-text-dim); font-size:14.5px; line-height:1.6; max-width:44ch; margin:0; }
+
+  .report-section-title{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; text-transform:uppercase; letter-spacing:0.14em; color:var(--brass); margin:44px 0 16px; display:flex; align-items:center; gap:10px; }
+  .report-section-title::after{ content:''; flex:1; height:1px; background:var(--rule-soft); }
+
+  .verdict-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:680px){ .verdict-grid{ grid-template-columns:1fr; } }
+  .verdict-card{ background:var(--ink-panel); border:1px solid var(--rule-soft); border-left:3px solid var(--rule); border-radius:2px; padding:18px 20px; }
+  .verdict-card.strong{ border-left-color:var(--verified); }
+  .verdict-card.developing{ border-left-color:var(--brass); }
+  .verdict-card.weak{ border-left-color:var(--flag); }
+  .verdict-card .vc-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:8px; }
+  .verdict-card h4{ margin:0; font-size:15px; font-weight:600; }
+  .verdict-card .score{ font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; flex-shrink:0; }
+  .verdict-card.strong .score{ color:var(--verified); }
+  .verdict-card.developing .score{ color:var(--brass); }
+  .verdict-card.weak .score{ color:var(--flag); }
+  .verdict-card .bar{ height:4px; background:var(--rule-soft); border-radius:4px; overflow:hidden; margin-bottom:12px; }
+  .verdict-card .bar i{ display:block; height:100%; }
+  .verdict-card.strong .bar i{ background:var(--verified); } .verdict-card.developing .bar i{ background:var(--brass); } .verdict-card.weak .bar i{ background:var(--flag); }
+  .verdict-card p{ font-size:13px; color:var(--ink-text-dim); line-height:1.55; margin:0 0 8px; }
+  .verdict-card .tip{ font-size:12.5px; color:var(--ink-text-faint); border-top:1px dashed var(--rule-soft); padding-top:8px; margin-top:8px; }
+  .verdict-card .tip b{ color:var(--brass-dim); font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; }
+
+  .summary-block{ background:var(--ink-panel); border:1px solid var(--rule-soft); padding:22px 24px; border-radius:2px; font-size:14.5px; line-height:1.7; color:var(--ink-text); }
+  .report-actions{ display:flex; gap:12px; margin-top:46px; flex-wrap:wrap; }
+
+  .toast-wrap{ position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:50; display:flex; flex-direction:column; gap:8px; align-items:center; }
+  .toast{ background:var(--ink-panel-raised); border:1px solid var(--rule); padding:11px 18px; border-radius:var(--radius); font-size:13px; box-shadow:var(--shadow-deep); display:flex; align-items:center; gap:10px; }
+  .toast.err{ border-color:var(--flag-dim); }
+  .toast button{ background:none; border:1px solid var(--rule); color:var(--ink-text); font-size:12px; padding:5px 10px; border-radius:2px; }
+  .toast button:hover{ border-color:var(--brass-dim); }
+
+  .footnote{ text-align:center; font-size:11.5px; color:var(--ink-text-faint); padding:26px; font-family:'IBM Plex Mono',monospace; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ============ LANDING ============ -->
+  <section class="screen active" id="screen-landing">
+    <div class="brandbar">
+      <div class="brand"><div class="mark">DX</div><div class="name">Defend Your <em>Experience</em></div></div>
+    </div>
+    <div class="wrap">
+      <div class="kicker">Cross-examination, rehearsed in private</div>
+      <h1 class="hero-title">Every claim on your resume is <span class="flag-word">testimony.</span></h1>
+      <p class="hero-sub">Upload the document you're about to be judged on. This opens a case file, pulls out every claim worth challenging, and cross-examines you on each one — the way a sharp interviewer would, not a generic quiz.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" id="btnStartCase">Open a new case file →</button>
+      </div>
+
+      <div class="how-grid">
+        <div class="how-cell"><span class="num">01</span><h3>State your case</h3><p>Tell it what you're defending, why, and who's across the table. Three quick questions, no forms.</p></div>
+        <div class="how-cell"><span class="num">02</span><h3>File the evidence</h3><p>Paste or drop your resume, LinkedIn text, pitch, or review. It gets logged as exhibits — one per claim.</p></div>
+        <div class="how-cell"><span class="num">03</span><h3>Take the stand</h3><p>Answer pointed follow-ups on each exhibit. Weak answers get pushed on. Strong ones move you forward.</p></div>
+      </div>
+
+      <div class="prior-cases">
+        <h2>Case history</h2>
+        <div id="priorCasesList"></div>
+      </div>
+    </div>
+    <div class="footnote">Nothing leaves your browser except calls to Claude. Cases are saved locally on this device.</div>
+  </section>
+
+  <!-- ============ SETUP MCQ ============ -->
+  <section class="screen" id="screen-setup">
+    <div class="brandbar">
+      <div class="brand"><div class="mark">DX</div><div class="name">Defend Your <em>Experience</em></div></div>
+      <button class="btn btn-ghost btn-small" id="btnAbortSetup">Cancel</button>
+    </div>
+    <div class="wrap">
+      <div class="setup-progress" id="setupProgress"></div>
+      <button class="setup-back" id="btnSetupBack" style="visibility:hidden;">← back</button>
+      <div class="q-eyebrow" id="setupEyebrow">Question 1 of 4</div>
+      <h2 class="q-title" id="setupQTitle"></h2>
+      <div class="mcq-list" id="setupOptions"></div>
+    </div>
+  </section>
+
+  <!-- ============ UPLOAD ============ -->
+  <section class="screen" id="screen-upload">
+    <div class="brandbar">
+      <div class="brand"><div class="mark">DX</div><div class="name">Defend Your <em>Experience</em></div></div>
+      <button class="btn btn-ghost btn-small" id="btnBackToSetup">← edit case details</button>
+    </div>
+    <div class="wrap">
+      <div class="q-eyebrow">Exhibit intake</div>
+      <h2 class="q-title" style="margin-bottom:18px;">Enter the document into evidence.</h2>
+      <p style="color:var(--ink-text-dim); font-size:14px; margin:-6px 0 26px; line-height:1.6;">Drop a plain-text file, or paste the content directly — resume, LinkedIn About section, pitch deck script, review, anything with claims worth defending.</p>
+
+      <div class="dropzone" id="dropzone">
+        <div class="dz-icon">⌘</div>
+        <h3>Drag a .txt or .md file here</h3>
+        <p>or click to browse your files</p>
+        <input type="file" id="fileInput" accept=".txt,.md,text/plain,text/markdown" style="display:none;">
+        <button class="btn btn-ghost btn-small file-label" id="btnBrowse">Choose a file</button>
+        <div id="fileChipWrap"></div>
+      </div>
+
+      <div class="divider-or">or paste text</div>
+      <textarea id="pasteArea" placeholder="Paste your resume, LinkedIn summary, pitch narrative, or performance review here..."></textarea>
+
+      <div class="upload-actions">
+        <span class="char-count" id="charCount">0 characters</span>
+        <button class="btn btn-primary" id="btnOpenCase" disabled>Open the case file →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXTRACTING ============ -->
+  <section class="screen" id="screen-extracting">
+    <div class="stamp-loader"></div>
+    <h2>Building the exhibit list…</h2>
+    <div id="extractingLabel">Reading the file for claims worth challenging</div>
+  </section>
+
+  <!-- ============ INTERVIEW ============ -->
+  <section class="screen" id="screen-interview">
+    <div class="case-header">
+      <div class="title-block">
+        <div class="gauge" id="headerGauge"><span id="headerGaugeNum">—</span></div>
+        <div>
+          <div class="case-name" id="caseName">Case No. —</div>
+          <div class="case-sub" id="caseSub">EXHIBIT — OF —</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-small" id="btnCloseCase">Close case & see report</button>
+      </div>
+    </div>
+    <div class="interview-body">
+      <div class="exhibit-rail" id="exhibitRail">
+        <div class="rail-label">Exhibits</div>
+      </div>
+      <div class="stage">
+        <div class="stage-inner" id="stageInner"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REPORT ============ -->
+  <section class="screen" id="screen-report">
+    <div class="brandbar">
+      <div class="brand"><div class="mark">DX</div><div class="name">Defend Your <em>Experience</em></div></div>
+    </div>
+    <div class="wrap">
+      <div class="q-eyebrow">Closing the case</div>
+      <div class="report-hero">
+        <div class="gauge-big" id="reportGaugeBig"><span class="gb-label">Case strength</span><span class="gb-num" id="reportGaugeNum">—</span></div>
+        <div>
+          <h1 id="reportHeadline">Verdict pending</h1>
+          <p id="reportSubline">Here's how each claim held up under questioning, and exactly what to shore up before the real thing.</p>
+        </div>
+      </div>
+
+      <div id="summaryBlockWrap"></div>
+
+      <div class="report-section-title">Held up well</div>
+      <div class="verdict-grid" id="strongGrid"></div>
+
+      <div class="report-section-title">Needs more evidence</div>
+      <div class="verdict-grid" id="weakGrid"></div>
+
+      <div class="report-actions">
+        <button class="btn btn-primary" id="btnExportReport">Export defense report ↓</button>
+        <button class="btn btn-ghost" id="btnNewCase">Start a new case</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ======================= STATE ======================= */
+  var STORAGE_KEY = "dye_sessions_v1";
+  var MAX_PROBES_PER_CLAIM = 2; // follow-up rounds after the opening question
+
+  var state = {
+    id: null,
+    createdAt: null,
+    setup: { defending: null, reason: null, audience: null, intensity: null },
+    rawContent: "",
+    sourceLabel: "",
+    claims: [], // {id,title,quote,category,riskLevel,whyChallenged,transcript:[{role,text}],probeCount,verdict,score,feedback,tip,status}
+    currentClaimIndex: 0,
+    completed: false
+  };
+
+  var setupQuestions = [
+    {
+      key: "defending",
+      title: "What are you here to defend?",
+      options: ["Resume & work history", "A business idea or pitch", "Research or academic work", "A performance review", "Freelance or portfolio work"]
+    },
+    {
+      key: "reason",
+      title: "Why are you preparing?",
+      options: ["Upcoming interview", "Promotion or performance review", "Investor or stakeholder pitch", "Just building confidence"]
+    },
+    {
+      key: "audience",
+      title: "Who's across the table?",
+      options: ["Hiring manager", "Executive or leadership panel", "Technical peers", "Investors", "A mixed panel"]
+    },
+    {
+      key: "intensity",
+      title: "How tough should this get?",
+      options: ["Fair but firm", "Skeptical — push back on everything", "Brutal — hold nothing back"]
+    }
+  ];
+  var setupStep = 0;
+
+  /* ======================= UTIL ======================= */
+  function $(id){ return document.getElementById(id); }
+  function el(tag, cls, html){ var e = document.createElement(tag); if(cls) e.className = cls; if(html !== undefined) e.innerHTML = html; return e; }
+  function showScreen(id){
+    document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
+    $(id).classList.add("active");
+    window.scrollTo(0,0);
+  }
+  function escapeHtml(str){
+    return String(str||"").replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c] || c;
+    });
+  }
+  function uid(){ return Math.random().toString(36).slice(2,10); }
+
+  function verdictBucket(score){
+    if (score >= 75) return "strong";
+    if (score >= 50) return "developing";
+    return "weak";
+  }
+  function verdictColorVar(bucket){
+    return bucket === "strong" ? "var(--verified)" : bucket === "developing" ? "var(--brass)" : "var(--flag)";
+  }
+  function verdictLabel(bucket){
+    return bucket === "strong" ? "Solid ground" : bucket === "developing" ? "Developing" : "Exposed";
+  }
+
+  function paintGauge(node, pct, big){
+    pct = Math.max(0, Math.min(100, pct||0));
+    var color = pct >= 75 ? "#4c8a76" : pct >= 50 ? "#c9a227" : "#b5482a";
+    node.style.background = "conic-gradient(" + color + " " + (pct*3.6) + "deg, rgba(255,255,255,0.06) 0deg)";
+    var numNode = node.querySelector("span.gb-num") || node.querySelector("span#headerGaugeNum") || node.querySelector("span");
+    if (numNode) numNode.textContent = Math.round(pct);
+  }
+
+  function toast(msg, isErr, retryFn){
+    var wrap = $("toastWrap");
+    var t = el("div", "toast" + (isErr ? " err" : ""));
+    var span = el("span", null, escapeHtml(msg));
+    t.appendChild(span);
+    if (retryFn){
+      var b = el("button", null, "Retry");
+      b.onclick = function(){ t.remove(); retryFn(); };
+      t.appendChild(b);
+    }
+    wrap.appendChild(t);
+    setTimeout(function(){ t.remove(); }, retryFn ? 9000 : 4200);
+  }
+
+  /* ======================= PERSISTENCE ======================= */
+  function loadSessions(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch(e){ return []; }
+  }
+  function saveSession(){
+    var sessions = loadSessions();
+    var idx = sessions.findIndex(function(s){ return s.id === state.id; });
+    var snapshot = JSON.parse(JSON.stringify(state));
+    if (idx >= 0) sessions[idx] = snapshot; else sessions.unshift(snapshot);
+    sessions = sessions.slice(0, 12);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions)); } catch(e){}
+  }
+  function deleteSession(id){
+    var sessions = loadSessions().filter(function(s){ return s.id !== id; });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    renderLanding();
+  }
+
+  function overallScore(){
+    var scored = state.claims.filter(function(c){ return typeof c.score === "number"; });
+    if (!scored.length) return 0;
+    return Math.round(scored.reduce(function(a,c){ return a + c.score; }, 0) / scored.length);
+  }
+
+  /* ======================= LANDING ======================= */
+  function renderLanding(){
+    var sessions = loadSessions();
+    var list = $("priorCasesList");
+    list.innerHTML = "";
+    if (!sessions.length){
+      list.appendChild(el("div", "empty-note", "No cases filed yet. Your first one starts above."));
+      return;
+    }
+    sessions.forEach(function(s){
+      var scored = (s.claims||[]).filter(function(c){ return typeof c.score === "number"; });
+      var avg = scored.length ? Math.round(scored.reduce(function(a,c){return a+c.score;},0)/scored.length) : null;
+      var row = el("div", "case-row");
+      var meta = el("div", "meta");
+      meta.appendChild(el("div", "t", escapeHtml(s.sourceLabel || "Untitled case") + (s.completed ? "" : " · in progress")));
+      var d = new Date(s.createdAt);
+      meta.appendChild(el("div", "d", d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}) + (s.setup && s.setup.defending ? " · " + s.setup.defending : "")));
+      row.appendChild(meta);
+      var actions = el("div", "actions");
+      if (avg !== null){
+        var g = el("div", "gauge-mini");
+        g.style.background = "conic-gradient(" + (avg>=75?"#4c8a76":avg>=50?"#c9a227":"#b5482a") + " " + (avg*3.6) + "deg, rgba(255,255,255,0.08) 0deg)";
+        actions.appendChild(g);
+      }
+      var openBtn = el("button", "btn btn-ghost btn-small", s.completed ? "View report" : "Resume");
+      openBtn.onclick = function(){ resumeSession(s); };
+      actions.appendChild(openBtn);
+      var delBtn = el("button", "btn btn-ghost btn-small", "✕");
+      delBtn.title = "Delete case";
+      delBtn.onclick = function(ev){ ev.stopPropagation(); deleteSession(s.id); };
+      actions.appendChild(delBtn);
+      row.appendChild(actions);
+      list.appendChild(row);
+    });
+  }
+
+  function resumeSession(s){
+    state = JSON.parse(JSON.stringify(s));
+    if (state.completed){ renderReport(); showScreen("screen-report"); }
+    else { enterInterview(true); }
+  }
+
+  function resetForNewCase(){
+    state = {
+      id: uid(), createdAt: Date.now(),
+      setup: { defending: null, reason: null, audience: null, intensity: null },
+      rawContent: "", sourceLabel: "",
+      claims: [], currentClaimIndex: 0, completed: false
+    };
+    setupStep = 0;
+  }
+
+  /* ======================= SETUP MCQ FLOW ======================= */
+  function renderSetupStep(){
+    var q = setupQuestions[setupStep];
+    $("setupEyebrow").textContent = "Question " + (setupStep+1) + " of " + setupQuestions.length;
+    $("setupQTitle").textContent = q.title;
+    var opts = $("setupOptions"); opts.innerHTML = "";
+    var letters = "ABCDE";
+    q.options.forEach(function(optText, i){
+      var card = el("button", "mcq-card");
+      card.innerHTML = '<span class="letter">' + letters[i] + '</span><span>' + escapeHtml(optText) + '</span>';
+      card.onclick = function(){
+        state.setup[q.key] = optText;
+        if (setupStep < setupQuestions.length - 1){ setupStep++; renderSetupStep(); }
+        else { showScreen("screen-upload"); }
+      };
+      opts.appendChild(card);
+    });
+    var progress = $("setupProgress"); progress.innerHTML = "";
+    setupQuestions.forEach(function(_, i){
+      var d = el("div", "dot" + (i < setupStep ? " done" : i === setupStep ? " active" : ""));
+      d.appendChild(el("i"));
+      progress.appendChild(d);
+    });
+    $("btnSetupBack").style.visibility = setupStep === 0 ? "hidden" : "visible";
+  }
+  $("btnSetupBack").onclick = function(){ if (setupStep > 0){ setupStep--; renderSetupStep(); } };
+  $("btnAbortSetup").onclick = function(){ showScreen("screen-landing"); renderLanding(); };
+  $("btnStartCase").onclick = function(){ resetForNewCase(); renderSetupStep(); showScreen("screen-setup"); };
+  $("btnBackToSetup").onclick = function(){ setupStep = setupQuestions.length - 1; renderSetupStep(); showScreen("screen-setup"); };
+
+  /* ======================= UPLOAD ======================= */
+  var uploadedFileText = null, uploadedFileName = null;
+  var dz = $("dropzone"), fileInput = $("fileInput"), pasteArea = $("pasteArea");
+
+  $("btnBrowse").onclick = function(){ fileInput.click(); };
+  dz.addEventListener("dragover", function(e){ e.preventDefault(); dz.classList.add("dragover"); });
+  dz.addEventListener("dragleave", function(){ dz.classList.remove("dragover"); });
+  dz.addEventListener("drop", function(e){
+    e.preventDefault(); dz.classList.remove("dragover");
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener("change", function(){ if (fileInput.files[0]) handleFile(fileInput.files[0]); });
+
+  function handleFile(file){
+    var reader = new FileReader();
+    reader.onload = function(){
+      uploadedFileText = reader.result;
+      uploadedFileName = file.name;
+      var wrap = $("fileChipWrap"); wrap.innerHTML = "";
+      var chip = el("div", "file-chip");
+      chip.innerHTML = '<span>📄 ' + escapeHtml(file.name) + '</span>';
+      var rm = el("button", null, "✕");
+      rm.onclick = function(){ uploadedFileText = null; uploadedFileName = null; wrap.innerHTML = ""; updateOpenCaseBtn(); };
+      chip.appendChild(rm);
+      wrap.appendChild(chip);
+      updateOpenCaseBtn();
+    };
+    reader.onerror = function(){ toast("Couldn't read that file — try pasting the text instead.", true); };
+    reader.readAsText(file);
+  }
+
+  function currentContent(){
+    return (uploadedFileText || pasteArea.value || "").trim();
+  }
+  function updateOpenCaseBtn(){
+    var len = currentContent().length;
+    $("charCount").textContent = len + " characters";
+    $("btnOpenCase").disabled = len < 40;
+  }
+  pasteArea.addEventListener("input", updateOpenCaseBtn);
+
+  $("btnOpenCase").onclick = function(){
+    state.rawContent = currentContent();
+    state.sourceLabel = uploadedFileName || guessLabel(state.rawContent);
+    showScreen("screen-extracting");
+    extractClaims();
+  };
+
+  function guessLabel(text){
+    var firstLine = text.split("\n")[0] || "";
+    return firstLine.slice(0, 40) || "Pasted case file";
+  }
+
+  /* ======================= ANTHROPIC API ======================= */
+  async function callClaude(system, userText, maxTokens){
+    var body = {
+      model: "claude-sonnet-4-6",
+      max_tokens: maxTokens || 1000,
+      system: system,
+      messages: [{ role: "user", content: userText }]
+    };
+    var attempt = 0, lastErr = null;
+    while (attempt < 3){
+      try {
+        var res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        if (res.status === 429 || res.status === 529 || res.status === 503){
+          lastErr = new Error("rate_limited");
+          await new Promise(function(r){ setTimeout(r, 900 * Math.pow(2, attempt)); });
+          attempt++; continue;
+        }
+        if (!res.ok){
+          var errText = await res.text().catch(function(){ return ""; });
+          throw new Error("API error " + res.status + " " + errText.slice(0,120));
+        }
+        var data = await res.json();
+        var text = (data.content || []).filter(function(b){ return b.type === "text"; }).map(function(b){ return b.text; }).join("\n");
+        return text;
+      } catch(e){
+        lastErr = e;
+        if (attempt >= 2) throw e;
+        await new Promise(function(r){ setTimeout(r, 700 * Math.pow(2, attempt)); });
+        attempt++;
+      }
+    }
+    throw lastErr || new Error("Failed after retries");
+  }
+
+  function parseJsonLoose(text){
+    if (!text) throw new Error("Empty response");
+    var cleaned = text.trim().replace(/^```json/i, "").replace(/^```/,"").replace(/```$/,"").trim();
+    try { return JSON.parse(cleaned); } catch(e){}
+    var match = cleaned.match(/\{[\s\S]*\}/);
+    if (match){ try { return JSON.parse(match[0]); } catch(e){} }
+    throw new Error("Could not parse response as JSON");
+  }
+
+  function setupContextLine(){
+    var s = state.setup;
+    return "The person is defending: " + (s.defending || "their professional experience") +
+      ". Reason for preparing: " + (s.reason || "an upcoming conversation") +
+      ". Audience they'll face: " + (s.audience || "an interviewer") +
+      ". Requested intensity: " + (s.intensity || "Fair but firm") + ".";
+  }
+
+  /* ---- Step 1: extract claims ---- */
+  async function extractClaims(){
+    var label = $("extractingLabel");
+    var lines = ["Reading the file for claims worth challenging", "Flagging vague metrics and soft language", "Building the exhibit list"];
+    var li = 0; var interval = setInterval(function(){ li = (li+1) % lines.length; label.textContent = lines[li]; }, 1600);
+
+    var system = "You are a rigorous, skeptical interview-prep analyst. You extract specific, checkable claims from a document so a candidate can be cross-examined on them before a real interview. You are precise and never generic. Respond with ONLY raw JSON — no markdown code fences, no preamble, no commentary.";
+    var user = setupContextLine() + "\n\nDocument to extract claims from:\n\"\"\"\n" + state.rawContent.slice(0, 9000) + "\n\"\"\"\n\n" +
+      "Extract 5 to 8 distinct, specific claims a skeptical interviewer would challenge (achievements, metrics, leadership/ownership statements, technical assertions, vague or unverifiable phrasing). Prefer claims with numbers, superlatives, or ownership language. Each claim must be traceable to specific wording in the document.\n\n" +
+      "Return ONLY this JSON shape:\n" +
+      '{"claims":[{"title":"short 3-6 word label","quote":"the exact or lightly paraphrased line from the document","category":"metric|leadership|technical|impact|ambiguous","riskLevel":"low|medium|high","whyChallenged":"one sentence on why this specific wording invites scrutiny"}]}';
+
+    try {
+      var text = await callClaude(system, user, 1400);
+      var json = parseJsonLoose(text);
+      var claims = (json.claims || []).slice(0, 8);
+      if (!claims.length) throw new Error("No claims returned");
+      state.claims = claims.map(function(c){
+        return {
+          id: uid(), title: c.title || "Untitled exhibit", quote: c.quote || "", category: c.category || "ambiguous",
+          riskLevel: c.riskLevel || "medium", whyChallenged: c.whyChallenged || "",
+          transcript: [], probeCount: 0, verdict: null, score: null, feedback: null, tip: null, status: "pending"
+        };
+      });
+      state.currentClaimIndex = 0;
+      clearInterval(interval);
+      saveSession();
+      enterInterview(false);
+    } catch(e){
+      clearInterval(interval);
+      toast("Couldn't build the exhibit list (" + e.message + "). Try again?", true, extractClaims);
+      showScreen("screen-upload");
+    }
+  }
+
+  /* ---- Step 2: ask opening question for a claim ---- */
+  async function askOpeningQuestion(claim){
+    var system = "You are a sharp, skeptical interviewer cross-examining a candidate on one specific claim from their document, in the style requested. Ask exactly ONE pointed, specific follow-up question — never generic ('tell me more'), always anchored to the claim's specific wording. Respond with ONLY raw JSON, no fences, no preamble.";
+    var user = setupContextLine() + "\n\nClaim under examination: \"" + claim.title + "\"\nExact wording: \"" + claim.quote + "\"\nCategory: " + claim.category + "\nWhy it invites scrutiny: " + claim.whyChallenged + "\n\n" +
+      'Return ONLY: {"question":"your one pointed opening question"}';
+    var text = await callClaude(system, user, 300);
+    var json = parseJsonLoose(text);
+    return json.question || "Walk me through exactly how you did that.";
+  }
+
+  /* ---- Step 3: evaluate answer, decide probe or conclude ---- */
+  async function evaluateAnswer(claim){
+    var transcriptText = claim.transcript.map(function(t){ return (t.role === "q" ? "Interviewer: " : "Candidate: ") + t.text; }).join("\n");
+    var probesLeft = MAX_PROBES_PER_CLAIM - claim.probeCount;
+    var system = "You are a skeptical interviewer evaluating how well a candidate just defended a specific claim, then deciding whether to probe deeper or conclude. Be honest and specific — do not inflate scores for vague or unsupported answers. Respond with ONLY raw JSON, no fences, no preamble.";
+    var user = setupContextLine() + "\n\nClaim: \"" + claim.title + "\" — \"" + claim.quote + "\"\n\nFull exchange so far:\n" + transcriptText + "\n\n" +
+      "Follow-up probes remaining before you must conclude: " + probesLeft + ".\n" +
+      "Decide: does this claim need one more pointed probe (continue=true), or is it time to conclude with a verdict (continue=false)? Conclude if the answer was strong and specific, if it was weak and further probing won't help, or if probes remaining is 0.\n\n" +
+      "Return ONLY this JSON shape:\n" +
+      '{"continue": true or false, "nextQuestion": "one pointed follow-up question, only if continue is true, else empty string", "score": 0-100 integer reflecting how well-defended the claim is right now, "verdictFeedback": "1-2 sentence honest coaching feedback on the defense so far", "tip": "one concrete, specific tip to strengthen this claim before a real interview, only meaningful if continue is false, else empty string"}';
+    var text = await callClaude(system, user, 500);
+    return parseJsonLoose(text);
+  }
+
+  /* ---- Step 4 (optional): closing summary for the report ---- */
+  async function generateClosingSummary(){
+    var lines = state.claims.map(function(c){
+      return "- " + c.title + " (score " + c.score + "/100, " + verdictLabel(verdictBucket(c.score)) + "): " + (c.feedback || "");
+    }).join("\n");
+    var system = "You are a candid interview coach writing a short closing summary of a mock cross-examination. Write 3-4 sentences, direct and specific, no filler, second person ('you'). Respond with plain text only, no JSON, no markdown.";
+    var user = setupContextLine() + "\n\nResults by exhibit:\n" + lines + "\n\nOverall score: " + overallScore() + "/100.\n\nWrite the closing summary now.";
+    return await callClaude(system, user, 300);
+  }
+
+  /* ======================= INTERVIEW SCREEN ======================= */
+  function currentClaim(){ return state.claims[state.currentClaimIndex]; }
+
+  function renderExhibitRail(){
+    var rail = $("exhibitRail");
+    rail.innerHTML = '<div class="rail-label">Exhibits</div>';
+    state.claims.forEach(function(c, i){
+      var isActive = i === state.currentClaimIndex;
+      var statusClass = c.status === "pending" ? "" : "status-" + (c.verdict || "active");
+      if (isActive && c.status !== "concluded") statusClass = "status-active";
+      var item = el("div", "exhibit-item" + (isActive ? " active" : "") + (c.status === "concluded" ? " concluded" : "") + " " + statusClass);
+      item.innerHTML = '<span class="dot"></span><span class="label"><span class="ex-num">Exhibit ' + String.fromCharCode(65+i) + '</span>' + escapeHtml(c.title) + '</span>';
+      rail.appendChild(item);
+    });
+  }
+
+  function refreshHeader(){
+    var concludedCount = state.claims.filter(function(c){ return c.status === "concluded"; }).length;
+    $("caseName").textContent = state.sourceLabel || "Case file";
+    $("caseSub").textContent = "EXHIBIT " + Math.min(state.currentClaimIndex+1, state.claims.length) + " OF " + state.claims.length + " · " + concludedCount + " CONCLUDED";
+    paintGauge($("headerGauge"), overallScore());
+    var span = document.querySelector("#headerGauge span");
+    span.textContent = state.claims.some(function(c){return c.score!==null;}) ? overallScore() : "—";
+  }
+
+  function enterInterview(isResume){
+    showScreen("screen-interview");
+    refreshHeader();
+    renderExhibitRail();
+    if (isResume && currentClaim() && currentClaim().transcript.length){
+      renderStageForClaim(currentClaim(), true);
+    } else {
+      loadClaimStage(state.currentClaimIndex);
+    }
+  }
+
+  async function loadClaimStage(index){
+    state.currentClaimIndex = index;
+    var claim = state.claims[index];
+    refreshHeader(); renderExhibitRail();
+    renderStageForClaim(claim, false, true);
+    if (!claim.transcript.length){
+      try {
+        var q = await askOpeningQuestion(claim);
+        claim.transcript.push({ role: "q", text: q });
+        saveSession();
+        renderStageForClaim(claim, false);
+      } catch(e){
+        renderThinkingError(claim, e, function(){ loadClaimStage(index); });
+      }
+    }
+  }
+
+  function claimIntroHtml(claim, idx){
+    return '<div class="exhibit-card">' +
+      '<span class="ex-tag">Exhibit ' + String.fromCharCode(65+idx) + ' · ' + escapeHtml(claim.category) + ' claim</span>' +
+      '<h2>' + escapeHtml(claim.title) + '</h2>' +
+      '<blockquote>"' + escapeHtml(claim.quote) + '"</blockquote>' +
+      '<span class="category-pill">' + escapeHtml(claim.riskLevel) + ' scrutiny risk</span>' +
+      (claim.verdict ? '<div class="stamp-overlay ' + claim.verdict + ' show">' + verdictLabel(claim.verdict) + '</div>' : '<div class="stamp-overlay" id="stampOverlay"></div>') +
+      '</div>';
+  }
+
+  function renderStageForClaim(claim, silentResume, loadingOnly){
+    var idx = state.currentClaimIndex;
+    var stage = $("stageInner");
+    stage.innerHTML = claimIntroHtml(claim, idx);
+
+    var transcriptWrap = el("div", "transcript");
+    claim.transcript.forEach(function(t){
+      var b = el("div", "bubble " + (t.role === "q" ? "q" : "a"), escapeHtml(t.text));
+      transcriptWrap.appendChild(b);
+    });
+    if (claim.feedback && claim.status === "concluded"){
+      transcriptWrap.appendChild(el("div", "bubble feedback", escapeHtml(claim.feedback) + (claim.tip ? "<br><br><b style='font-family:IBM Plex Mono,monospace;font-size:11px;color:var(--brass-dim);text-transform:uppercase;letter-spacing:.06em;'>Strengthen it:</b> " + escapeHtml(claim.tip) : "")));
+    }
+    stage.appendChild(transcriptWrap);
+
+    if (loadingOnly){
+      var think = el("div", "thinking-line");
+      think.innerHTML = 'Preparing the next question <span class="dotflash"><i></i><i></i><i></i></span>';
+      stage.appendChild(think);
+      return;
+    }
+
+    if (claim.status === "concluded"){
+      var row = el("div", "next-exhibit-row");
+      var isLast = idx === state.claims.length - 1;
+      var btn = el("button", "btn btn-primary btn-small", isLast ? "See defense report →" : "Next exhibit →");
+      btn.onclick = function(){
+        if (isLast){ finalizeCase(); }
+        else { loadClaimStage(idx+1); }
+      };
+      row.appendChild(btn);
+      stage.appendChild(row);
+      return;
+    }
+
+    // active answer box
+    var box = el("div", "answer-box");
+    var ta = el("textarea"); ta.id = "answerInput";
+    ta.placeholder = "Answer like you would in the room — specifics beat generalities.";
+    box.appendChild(ta);
+    var arow = el("div", "answer-row");
+    var hint = el("span", null, "");
+    hint.style.cssText = "font-size:12px;color:var(--ink-text-faint);font-family:'IBM Plex Mono',monospace;";
+    hint.textContent = "Probe " + (claim.probeCount + 1) + " of " + (MAX_PROBES_PER_CLAIM + 1);
+    arow.appendChild(hint);
+    var submitBtn = el("button", "btn btn-primary btn-small", "Submit answer →");
+    submitBtn.onclick = function(){ submitAnswer(claim, ta.value); };
+    arow.appendChild(submitBtn);
+    box.appendChild(arow);
+    stage.appendChild(box);
+    ta.focus();
+    ta.addEventListener("keydown", function(e){
+      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submitAnswer(claim, ta.value);
+    });
+  }
+
+  function renderThinkingError(claim, e, retryFn){
+    var stage = $("stageInner");
+    var banner = el("div", "banner");
+    banner.innerHTML = '<span>The interviewer got interrupted (' + escapeHtml((e && e.message) || "network issue") + '). This usually clears up in a moment.</span>';
+    var btn = el("button", "btn btn-ghost btn-small", "Try again");
+    btn.onclick = retryFn;
+    banner.appendChild(btn);
+    stage.appendChild(banner);
+  }
+
+  async function submitAnswer(claim, answerText){
+    answerText = (answerText || "").trim();
+    if (!answerText) return;
+    claim.transcript.push({ role: "a", text: answerText });
+    saveSession();
+    renderStageForClaim(claim, false, true);
+    try {
+      var result = await evaluateAnswer(claim);
+      claim.score = typeof result.score === "number" ? result.score : claim.score;
+      claim.feedback = result.verdictFeedback || claim.feedback;
+      if (result.continue && claim.probeCount < MAX_PROBES_PER_CLAIM){
+        claim.probeCount++;
+        claim.transcript.push({ role: "q", text: result.nextQuestion || "Push a bit further — what specifically backs that up?" });
+        saveSession();
+        renderStageForClaim(claim, false);
+      } else {
+        claim.status = "concluded";
+        claim.verdict = verdictBucket(claim.score || 0);
+        claim.tip = result.tip || "";
+        saveSession();
+        renderExhibitRail();
+        renderStageForClaim(claim, false);
+        triggerStamp(claim.verdict);
+        refreshHeader();
+      }
+    } catch(e){
+      renderThinkingError(claim, e, function(){ submitAnswer(claim, ""); reRenderLastAnswerRetry(claim, answerText); });
+    }
+  }
+  function reRenderLastAnswerRetry(claim, answerText){
+    // re-attempt evaluation without duplicating the answer bubble
+    renderStageForClaim(claim, false, true);
+    evaluateAnswer(claim).then(function(result){
+      claim.score = typeof result.score === "number" ? result.score : claim.score;
+      claim.feedback = result.verdictFeedback || claim.feedback;
+      if (result.continue && claim.probeCount < MAX_PROBES_PER_CLAIM){
+        claim.probeCount++;
+        claim.transcript.push({ role: "q", text: result.nextQuestion || "Push a bit further." });
+        saveSession(); renderStageForClaim(claim, false);
+      } else {
+        claim.status = "concluded"; claim.verdict = verdictBucket(claim.score || 0); claim.tip = result.tip || "";
+        saveSession(); renderExhibitRail(); renderStageForClaim(claim, false); triggerStamp(claim.verdict); refreshHeader();
+      }
+    }).catch(function(e){ renderThinkingError(claim, e, function(){ reRenderLastAnswerRetry(claim, answerText); }); });
+  }
+
+  function triggerStamp(verdict){
+    var s = document.getElementById("stampOverlay");
+    if (!s) return;
+    s.className = "stamp-overlay " + verdict;
+    s.textContent = verdictLabel(verdict);
+    requestAnimationFrame(function(){ s.classList.add("show"); });
+  }
+
+  $("btnCloseCase").onclick = function(){ finalizeCase(); };
+
+  /* ======================= FINALIZE + REPORT ======================= */
+  async function finalizeCase(){
+    state.completed = true;
+    saveSession();
+    renderReport();
+    showScreen("screen-report");
+    var wrap = $("summaryBlockWrap");
+    wrap.innerHTML = '<div class="summary-block"><span class="mono" style="font-size:11px;color:var(--brass-dim);">Writing closing statement…</span></div>';
+    try {
+      var summary = await generateClosingSummary();
+      wrap.innerHTML = '<div class="summary-block">' + escapeHtml(summary) + '</div>';
+    } catch(e){
+      wrap.innerHTML = '<div class="summary-block">Closing statement unavailable right now — the per-exhibit notes below still cover everything you need.</div>';
+    }
+  }
+
+  function renderReport(){
+    var score = overallScore();
+    paintGauge($("reportGaugeBig"), score);
+    $("reportGaugeNum").textContent = score;
+    var scored = state.claims.filter(function(c){ return typeof c.score === "number"; });
+    var strongCount = scored.filter(function(c){ return verdictBucket(c.score) === "strong"; }).length;
+    $("reportHeadline").textContent = score >= 75 ? "You can defend this." : score >= 50 ? "Mostly ready — a few soft spots." : "Not ready yet. Good thing this was a rehearsal.";
+    $("reportSubline").textContent = strongCount + " of " + scored.length + " exhibits held up under cross-examination.";
+
+    var strongGrid = $("strongGrid"); strongGrid.innerHTML = "";
+    var weakGrid = $("weakGrid"); weakGrid.innerHTML = "";
+    var anyStrong = false, anyWeak = false;
+
+    state.claims.forEach(function(c, i){
+      if (typeof c.score !== "number") return;
+      var bucket = verdictBucket(c.score);
+      var card = el("div", "verdict-card " + bucket);
+      card.innerHTML =
+        '<div class="vc-top"><h4>Exhibit ' + String.fromCharCode(65+i) + ' — ' + escapeHtml(c.title) + '</h4><span class="score">' + c.score + '/100</span></div>' +
+        '<div class="bar"><i style="width:' + c.score + '%"></i></div>' +
+        '<p>' + escapeHtml(c.feedback || "") + '</p>' +
+        (c.tip ? '<div class="tip"><b>Strengthen it</b><br>' + escapeHtml(c.tip) + '</div>' : '');
+      if (bucket === "strong"){ strongGrid.appendChild(card); anyStrong = true; }
+      else { weakGrid.appendChild(card); anyWeak = true; }
+    });
+    if (!anyStrong) strongGrid.appendChild(el("div", "empty-note", "Nothing scored 75+ yet — every exhibit still needs sharpening."));
+    if (!anyWeak) weakGrid.appendChild(el("div", "empty-note", "Nothing flagged — every exhibit held up."));
+  }
+
+  $("btnNewCase").onclick = function(){ showScreen("screen-landing"); renderLanding(); };
+
+  $("btnExportReport").onclick = function(){
+    var lines = [];
+    lines.push("DEFENSE REPORT");
+    lines.push("Case: " + (state.sourceLabel || "Untitled"));
+    lines.push("Date: " + new Date(state.createdAt).toLocaleString());
+    lines.push("Defending: " + (state.setup.defending || "—") + " | Audience: " + (state.setup.audience || "—") + " | Reason: " + (state.setup.reason || "—"));
+    lines.push("Overall case strength: " + overallScore() + "/100");
+    lines.push("");
+    state.claims.forEach(function(c, i){
+      if (typeof c.score !== "number") return;
+      lines.push("EXHIBIT " + String.fromCharCode(65+i) + " — " + c.title + " (" + c.score + "/100, " + verdictLabel(verdictBucket(c.score)) + ")");
+      lines.push("Claim: " + c.quote);
+      lines.push("Feedback: " + (c.feedback || ""));
+      if (c.tip) lines.push("Strengthen it: " + c.tip);
+      lines.push("");
+    });
+    var blob = new Blob([lines.join("\n")], { type: "text/plain" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "defense-report.txt";
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  /* ======================= INIT ======================= */
+  renderLanding();
+})();
+</script>
+</body>
+</html>
