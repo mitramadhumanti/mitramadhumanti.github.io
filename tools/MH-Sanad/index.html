@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanad — a quiet place to think</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12162A;
+    --bg-panel:#1B2140;
+    --bg-panel-2:#232A4E;
+    --ink:#F1EDE2;
+    --ink-muted:#9AA1C4;
+    --ink-faint:#666E96;
+    --amber:#E3A44C;
+    --amber-soft:#E3A44C33;
+    --teal:#5FA89C;
+    --line:#2E355C;
+    --danger:#E3785A;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 18% 8%, #1c2348 0%, transparent 45%),
+      radial-gradient(circle at 85% 92%, #201a3a 0%, transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .wrap{
+    width:100%;
+    max-width:640px;
+    padding:32px 20px 40px;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+  }
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:8px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:20px;
+    letter-spacing:0.02em;
+  }
+  .brand-mark{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 0 4px var(--amber-soft);
+  }
+  .privacy-pill{
+    font-size:11px;
+    color:var(--ink-muted);
+    border:1px solid var(--line);
+    padding:5px 10px;
+    border-radius:100px;
+    letter-spacing:0.02em;
+  }
+
+  /* ---------- Landing ---------- */
+  .landing{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+    padding:20px 0 60px;
+  }
+  .orb{
+    width:120px;height:120px;
+    margin:0 auto 36px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #F3C88A, var(--amber) 55%, #a76f2c 100%);
+    box-shadow:0 0 60px 10px var(--amber-soft);
+    animation:breathe 4.2s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.12);}
+  }
+  h1.title{
+    font-family:'Fraunces',serif;
+    font-weight:400;
+    font-style:italic;
+    font-size:clamp(28px,5vw,38px);
+    line-height:1.25;
+    margin:0 0 16px;
+    color:var(--ink);
+  }
+  .sub{
+    color:var(--ink-muted);
+    font-size:15.5px;
+    line-height:1.6;
+    max-width:440px;
+    margin:0 auto 36px;
+  }
+  .begin-btn{
+    background:var(--amber);
+    color:#1a1408;
+    border:none;
+    padding:14px 30px;
+    border-radius:100px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .begin-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px -8px var(--amber-soft);}
+  .begin-btn:focus-visible{outline:2px solid var(--amber);outline-offset:3px;}
+
+  .assurances{
+    margin-top:40px;
+    display:flex;
+    gap:22px;
+    justify-content:center;
+    flex-wrap:wrap;
+    color:var(--ink-faint);
+    font-size:12.5px;
+  }
+  .assurances span{display:flex;align-items:center;gap:6px;}
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);}
+
+  /* ---------- Conversation ---------- */
+  .session{
+    flex:1;
+    display:none;
+    flex-direction:column;
+  }
+  .session.active{display:flex;}
+  .thread{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 2px 30px;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+  .msg{
+    max-width:92%;
+    line-height:1.65;
+    font-size:15.5px;
+    animation:rise .4s ease both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .msg.ai{
+    align-self:flex-start;
+    color:var(--ink);
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:18px;
+    line-height:1.6;
+  }
+  .msg.user{
+    align-self:flex-end;
+    background:var(--bg-panel-2);
+    padding:12px 16px;
+    border-radius:16px 16px 4px 16px;
+    color:#EFEBF9;
+  }
+  .msg.system-note{
+    align-self:center;
+    color:var(--ink-faint);
+    font-size:12.5px;
+    text-align:center;
+  }
+  .thinking{
+    align-self:flex-start;
+    display:flex;
+    gap:6px;
+    padding:6px 0;
+  }
+  .thinking span{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--amber);
+    animation:pulse 1.2s infinite ease-in-out;
+  }
+  .thinking span:nth-child(2){animation-delay:.15s;}
+  .thinking span:nth-child(3){animation-delay:.3s;}
+  @keyframes pulse{0%,80%,100%{opacity:.25;transform:scale(.8);}40%{opacity:1;transform:scale(1);}}
+
+  .composer{
+    display:flex;
+    gap:10px;
+    align-items:flex-end;
+    border-top:1px solid var(--line);
+    padding-top:16px;
+  }
+  textarea{
+    flex:1;
+    resize:none;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:12px 14px;
+    min-height:48px;
+    max-height:140px;
+    line-height:1.5;
+  }
+  textarea:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
+  textarea::placeholder{color:var(--ink-faint);}
+  .send-btn{
+    background:var(--amber);
+    border:none;
+    color:#1a1408;
+    width:44px;height:44px;
+    border-radius:50%;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    transition:opacity .15s ease;
+  }
+  .send-btn:disabled{opacity:.4;cursor:default;}
+  .send-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+
+  .error-banner{
+    background:#3A2230;
+    border:1px solid var(--danger);
+    color:#F4C9BB;
+    font-size:13.5px;
+    padding:10px 14px;
+    border-radius:10px;
+    margin-bottom:14px;
+    display:none;
+  }
+
+  /* ---------- Closing ---------- */
+  .closing{
+    display:none;
+    flex-direction:column;
+    padding:20px 0 40px;
+  }
+  .closing.active{display:flex;}
+  .closing h2{
+    font-family:'Fraunces',serif;
+    font-weight:400;
+    font-style:italic;
+    font-size:24px;
+    margin:0 0 6px;
+  }
+  .closing .lead{color:var(--ink-muted);font-size:14px;margin-bottom:24px;}
+  .summary-card{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:22px;
+    font-size:15px;
+    line-height:1.7;
+    color:var(--ink);
+    margin-bottom:20px;
+  }
+  .letter-card{
+    background:linear-gradient(160deg,var(--bg-panel-2),var(--bg-panel));
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:30px 26px;
+    position:relative;
+    margin-bottom:24px;
+  }
+  .letter-card::before{
+    content:"";
+    position:absolute;
+    top:18px;left:26px;right:26px;
+    height:1px;
+    background:var(--line);
+  }
+  .letter-label{
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:16px;
+    display:block;
+  }
+  .letter-body{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-style:italic;
+    font-size:17.5px;
+    line-height:1.85;
+    color:var(--ink);
+    white-space:pre-wrap;
+  }
+  .closing-actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    border-radius:100px;
+    padding:12px 22px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+  }
+  .btn.primary{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:#1a1408;
+  }
+  .btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+
+  footer{
+    text-align:center;
+    padding-top:18px;
+    margin-top:auto;
+  }
+  .crisis-link{
+    color:var(--ink-faint);
+    font-size:12px;
+    text-decoration:underline;
+    cursor:pointer;
+    background:none;
+    border:none;
+    font-family:'Inter',sans-serif;
+  }
+  .crisis-panel{
+    display:none;
+    max-width:480px;
+    margin:10px auto 0;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 18px;
+    font-size:12.5px;
+    color:var(--ink-muted);
+    line-height:1.6;
+    text-align:left;
+  }
+  .crisis-panel.open{display:block;}
+
+  @media (prefers-reduced-motion: reduce){
+    .orb, .msg, .thinking span{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><span class="brand-mark"></span>Sanad</div>
+    <div class="privacy-pill">No sign-up · Nothing saved</div>
+  </header>
+
+  <!-- LANDING -->
+  <section class="landing" id="landing">
+    <div class="orb"></div>
+    <h1 class="title">A quiet place to say<br>what's actually going on.</h1>
+    <p class="sub">No account, no history, no one else reads this. Just tell it what's weighing on you — burnout, loneliness, family pressure, whatever it is — and it'll help you think it through, one honest question at a time.</p>
+    <button class="begin-btn" id="beginBtn">Begin a reflection</button>
+    <div class="assurances">
+      <span><span class="dot"></span>Anonymous</span>
+      <span><span class="dot"></span>Nothing stored</span>
+      <span><span class="dot"></span>~10 minutes</span>
+    </div>
+  </section>
+
+  <!-- SESSION -->
+  <section class="session" id="session">
+    <div class="error-banner" id="errorBanner">Something didn't load right. <a href="#" id="retryLink" style="color:#F4C9BB;">Try that again</a>.</div>
+    <div class="thread" id="thread"></div>
+    <div class="composer">
+      <textarea id="input" placeholder="Type as much or as little as you want…" rows="1"></textarea>
+      <button class="send-btn" id="sendBtn" aria-label="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12L20 4L14 20L11 13L4 12Z" fill="#1a1408"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing" id="closing">
+    <h2>That's a real thing to have named.</h2>
+    <p class="lead">Here's what came out of it — yours to keep, no one else sees it.</p>
+    <div class="summary-card" id="summaryCard"></div>
+    <div class="letter-card">
+      <span class="letter-label">A letter to yourself</span>
+      <div class="letter-body" id="letterBody"></div>
+    </div>
+    <div class="closing-actions">
+      <button class="btn primary" id="downloadBtn">Download this letter</button>
+      <button class="btn" id="restartBtn">Start a new reflection</button>
+    </div>
+  </section>
+
+  <footer>
+    <button class="crisis-link" id="crisisToggle">If you're in crisis right now, tap here</button>
+    <div class="crisis-panel" id="crisisPanel">
+      This tool isn't equipped for emergencies. If you're thinking about suicide or self-harm, or you're not safe right now, please contact your local emergency number or a crisis line immediately. <strong>findahelpline.com</strong> lists free, confidential helplines by country. You don't have to explain anything — just say you need someone to talk to.
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const landing = document.getElementById('landing');
+  const session = document.getElementById('session');
+  const closing = document.getElementById('closing');
+  const thread = document.getElementById('thread');
+  const input = document.getElementById('input');
+  const sendBtn = document.getElementById('sendBtn');
+  const beginBtn = document.getElementById('beginBtn');
+  const errorBanner = document.getElementById('errorBanner');
+  const retryLink = document.getElementById('retryLink');
+  const crisisToggle = document.getElementById('crisisToggle');
+  const crisisPanel = document.getElementById('crisisPanel');
+  const restartBtn = document.getElementById('restartBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const summaryCard = document.getElementById('summaryCard');
+  const letterBody = document.getElementById('letterBody');
+
+  let history = []; // {role, content} for the API
+  let lastUserMessage = null;
+  let letterText = '';
+
+  const SYSTEM_PROMPT = `You are the reflection guide inside a private, anonymous wellness tool called "Sanad" (Arabic for a support or a leaning-post). You are NOT a therapist, counselor, or doctor. You never diagnose, never suggest medication or treatment, and never claim professional credentials. Your only job is to hold one warm, unhurried guided-reflection conversation with someone who wants a private space to think out loud, and then close with a gentle reframe and a short personal keepsake letter.
+
+Adapt to whatever the person brings — burnout, loneliness, family pressure, career anxiety, or anything else — using this arc rather than a fixed script:
+1. Opening — invite them to share what's on their mind, warmly and without pressure.
+2. Exploring — ask ONE gentle, open question at a time to understand what's actually going on.
+3. Reflecting — ask a few thoughtful follow-up questions that help them notice patterns, feelings, or what they actually need. One question per turn, never a list.
+4. Reframe — once there's real substance (usually after 5-8 of their messages), gently offer a reframe or insight, and check that it lands.
+5. Closing — write a warm closing summary and a short "letter to yourself" the person can keep. Move to this phase only once, when the conversation has reached a natural, earned point — not too rushed, not dragged out.
+
+Rules:
+- Every message is short: 2-5 sentences, conversational, never bullet points, never clinical language.
+- Never diagnose, never name a mental health condition for them, never suggest medication.
+- If they mention suicide, self-harm, or being unsafe, respond with direct warmth and encourage them to contact a local crisis line or emergency number or a trusted person right now. Set phase to "crisis" and stop the reflection arc — do not continue asking reflection questions.
+- Only set phase to "closing" once, at the true end.
+
+Respond with ONLY valid JSON, no markdown fences, no commentary, matching exactly this shape:
+{"phase": "opening" | "exploring" | "reflecting" | "closing" | "crisis", "message": "your short conversational message to show the person", "summary": "", "letter": ""}
+For "closing", also fill "summary" (a short warm reframe, 2-4 sentences) and "letter" (the full letter to themselves, written in second person "you", 120-220 words, plain paragraphs, no markdown).`;
+
+  function autoGrow(){
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 140) + 'px';
+  }
+  input.addEventListener('input', autoGrow);
+
+  function addMessage(role, text){
+    const div = document.createElement('div');
+    div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+    div.textContent = text;
+    thread.appendChild(div);
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  function addThinking(){
+    const div = document.createElement('div');
+    div.className = 'thinking';
+    div.id = 'thinkingIndicator';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    thread.appendChild(div);
+    thread.scrollTop = thread.scrollHeight;
+  }
+  function removeThinking(){
+    const el = document.getElementById('thinkingIndicator');
+    if (el) el.remove();
+  }
+
+  function setBusy(busy){
+    sendBtn.disabled = busy;
+    input.disabled = busy;
+  }
+
+  async function callModel(){
+    errorBanner.style.display = 'none';
+    setBusy(true);
+    addThinking();
+    try{
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: SYSTEM_PROMPT,
+          messages: history
+        })
+      });
+      const data = await response.json();
+      const textBlock = (data.content || []).find(b => b.type === 'text');
+      if(!textBlock) throw new Error('No text in response');
+      let clean = textBlock.text.trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```$/,'').trim();
+      const parsed = JSON.parse(clean);
+
+      removeThinking();
+      history.push({ role: 'assistant', content: textBlock.text });
+      addMessage('ai', parsed.message);
+
+      if(parsed.phase === 'closing'){
+        setTimeout(() => showClosing(parsed.summary, parsed.letter), 900);
+      }
+    } catch(err){
+      console.error('Sanad error:', err);
+      removeThinking();
+      errorBanner.style.display = 'block';
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function showClosing(summary, letter){
+    session.classList.remove('active');
+    closing.classList.add('active');
+    summaryCard.textContent = summary || "Thank you for being honest about all of this with yourself today.";
+    letterText = letter || "";
+    letterBody.textContent = letterText;
+  }
+
+  function startSession(){
+    landing.style.display = 'none';
+    session.classList.add('active');
+    history = [{ role: 'user', content: "I'm ready to begin. Please open the conversation." }];
+    callModel();
+  }
+
+  function sendMessage(){
+    const text = input.value.trim();
+    if(!text) return;
+    addMessage('user', text);
+    history.push({ role: 'user', content: text });
+    input.value = '';
+    autoGrow();
+    callModel();
+  }
+
+  beginBtn.addEventListener('click', startSession);
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  retryLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    errorBanner.style.display = 'none';
+    callModel();
+  });
+  crisisToggle.addEventListener('click', () => crisisPanel.classList.toggle('open'));
+
+  downloadBtn.addEventListener('click', () => {
+    const blob = new Blob([
+      "A LETTER TO YOURSELF\n" +
+      "Written with Sanad — " + new Date().toLocaleDateString() + "\n\n" +
+      letterText + "\n\n" +
+      "— This was written just for you. Nothing about this session was saved anywhere.\n"
+    ], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'letter-to-myself.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  restartBtn.addEventListener('click', () => {
+    history = [];
+    letterText = '';
+    thread.innerHTML = '';
+    closing.classList.remove('active');
+    landing.style.display = 'flex';
+  });
+
+})();
+</script>
+</body>
+</html>
